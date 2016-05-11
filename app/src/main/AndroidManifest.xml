@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ AndroidManifest.xml
   ~ Copyright (C) 2016  Lynn
   ~
@@ -15,8 +14,7 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lynn9388.datamonitor">
 
@@ -35,6 +33,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".introduction.IntroductionActivity"
+            android:theme="@style/FullScreenTheme">
         </activity>
     </application>
 
