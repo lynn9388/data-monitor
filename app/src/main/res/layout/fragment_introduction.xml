@@ -41,12 +41,11 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/button"
             style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="New Button"
+            android:id="@+id/button"
+            android:background="@drawable/button_circular"
+            android:layout_width="196dp"
+            android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textSize="16sp" />
     </LinearLayout>
