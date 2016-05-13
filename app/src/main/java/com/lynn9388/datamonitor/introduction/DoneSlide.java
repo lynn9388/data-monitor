@@ -18,11 +18,15 @@
 
 package com.lynn9388.datamonitor.introduction;
 
+import android.content.Intent;
 import android.view.View;
+
+import com.lynn9388.datamonitor.MainActivity;
 
 public class DoneSlide extends SlideFragment<DoneSlide> {
     @Override
     public void onClick(View v) {
-
+        startActivity(new Intent(getContext(), MainActivity.class));
+        getActivity().finish();
     }
 }

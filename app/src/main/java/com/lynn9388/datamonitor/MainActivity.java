@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, IntroductionActivity.class));
             finish();
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("FirstStart", true);
+            editor.putBoolean("FirstStart", false);
             editor.apply();
         }
 
