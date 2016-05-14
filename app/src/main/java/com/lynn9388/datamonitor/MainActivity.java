@@ -20,6 +20,8 @@ package com.lynn9388.datamonitor;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.TrafficStats;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -30,14 +32,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.lynn9388.datamonitor.dao.DaoMaster;
+import com.lynn9388.datamonitor.dao.DaoSession;
+import com.lynn9388.datamonitor.dao.MobileData;
+import com.lynn9388.datamonitor.dao.MobileDataDao;
+import com.lynn9388.datamonitor.dao.WifiDataDao;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
+
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private SQLiteDatabase mDatabase;
+    private DaoMaster mDaoMaster;
+    private DaoSession mDaoSession;
+    private MobileDataDao mMobileDataDao;
+    private WifiDataDao mWifiDataDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +91,20 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "data-db", null);
+        mDatabase = helper.getWritableDatabase();
+        mDaoMaster = new DaoMaster(mDatabase);
+        mDaoSession = mDaoMaster.newSession();
+        mMobileDataDao = mDaoSession.getMobileDataDao();
+        mWifiDataDao = mDaoSession.getWifiDataDao();
+
+        MobileData mobileData = new MobileData(null, new Date(), TrafficStats.getTotalRxBytes(),
+                TrafficStats.getTotalTxBytes());
+        mMobileDataDao.insert(mobileData);
+        List<MobileData> logs = mMobileDataDao.queryBuilder().list();
+        for (MobileData log : logs) {
+            Log.i("lynn", log.getStartTime().toString() + " " + log.getReceivedBytes() + " " + log.getTransmittedBytes());
+        }
     }
 
     @Override
