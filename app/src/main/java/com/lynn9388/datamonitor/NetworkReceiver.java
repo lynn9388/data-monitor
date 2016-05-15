@@ -23,26 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class NetworkReceiver extends BroadcastReceiver {
+    private static final String TAG = NetworkReceiver.class.getName();
+
     public NetworkReceiver() {
-    }
-
-    public static boolean isNetworkConnected(Context context) {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo mobileInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        NetworkInfo wifiInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        boolean mobileConnected = mobileInfo.isConnected();
-        boolean wifiConnected = wifiInfo.isConnected();
-
-        return mobileConnected || wifiConnected;
     }
 
     @Override
@@ -57,14 +44,15 @@ public class NetworkReceiver extends BroadcastReceiver {
         } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
             boolean netwrokConnected = preferences.getBoolean(connectedPreference, false);
 
-            if (!netwrokConnected && isNetworkConnected(context)) {
-                Log.i("lynn", "connected");
+            if (!netwrokConnected && NetworkUtil.isNetworkConnected(context)) {
+                Log.d(TAG, "Network state changed: disconnected -> connected");
                 editor.putBoolean(connectedPreference, true);
-            } else if (netwrokConnected && !isNetworkConnected(context)) {
-                Log.i("lynn", "disconnected");
+                editor.apply();
+            } else if (netwrokConnected && !NetworkUtil.isNetworkConnected(context)) {
+                Log.d(TAG, "Network state changed: connected -> disconnected");
                 editor.putBoolean(connectedPreference, false);
+                editor.apply();
             }
         }
-        editor.apply();
     }
 }
