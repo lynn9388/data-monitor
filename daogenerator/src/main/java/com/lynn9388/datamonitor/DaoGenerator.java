@@ -27,26 +27,25 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGenerator {
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "com.lynn9388.datamonitor.dao");
-
-        addMobileDataEntity(schema);
-        addWifiDataEntity(schema);
-
+        addTrafficLogEntity(schema);
         new de.greenrobot.daogenerator.DaoGenerator().generateAll(schema, "../app/src/main/java");
     }
 
-    private static void addMobileDataEntity(Schema schema) {
-        Entity mobile = schema.addEntity("MobileData");
-        mobile.addIdProperty();
-        mobile.addDateProperty("startTime").notNull();
-        mobile.addLongProperty("receivedBytes").notNull();
-        mobile.addLongProperty("transmittedBytes").notNull();
-    }
-
-    private static void addWifiDataEntity(Schema schema) {
-        Entity wifi = schema.addEntity("WifiData");
-        wifi.addIdProperty();
-        wifi.addDateProperty("startTime").notNull();
-        wifi.addLongProperty("receivedBytes").notNull();
-        wifi.addLongProperty("transmittedBytes").notNull();
+    private static void addTrafficLogEntity(Schema schema) {
+        Entity trafficLog = schema.addEntity("TrafficLog");
+        trafficLog.addIdProperty();
+        trafficLog.addDateProperty("time").notNull();
+        // Number of bytes received across mobile networks in the past 10 seconds.
+        trafficLog.addLongProperty("mobileRxBytes").notNull();
+        // Number of bytes transmitted across mobile networks in the past 10 seconds.
+        trafficLog.addLongProperty("mobileTxBytes").notNull();
+        // Number of bytes received across mobile networks in the past 10 seconds.
+        trafficLog.addLongProperty("wifiRxBytes").notNull();
+        // Number of bytes transmitted across mobile networks in the past 10 seconds.
+        trafficLog.addLongProperty("wifiTxBytes").notNull();
+        // Number of bytes received since device boot.
+        trafficLog.addLongProperty("totalRxBytes").notNull();
+        // Number of bytes transmitted since device boot.
+        trafficLog.addLongProperty("totalTxBytes").notNull();
     }
 }
