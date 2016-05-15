@@ -31,10 +31,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.dao.DaoSession;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
+import com.philjay.circledisplay.CircleDisplay;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        initOverView();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -136,5 +140,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void initOverView() {
+        View container = findViewById(R.id.main_activity_container);
+        CircleDisplay circleDisplay = (CircleDisplay) container.findViewById(R.id.data_usage_view);
+        View panel1 = container.findViewById(R.id.panel1);
+        View panel2 = container.findViewById(R.id.panel2);
+        View panel3 = container.findViewById(R.id.panel3);
+        View panel4 = container.findViewById(R.id.panel4);
+
+        initPanel(panel1, R.string.used_today, "--");
+        initPanel(panel2, R.string.used_this_month, "--");
+        initPanel(panel3, R.string.monthly_data_plan, "--");
+        initPanel(panel4, R.string.remaining_this_month, "--");
+    }
+
+    private void initPanel(View panel, int title, String value) {
+        TextView titleView = (TextView) panel.findViewById(R.id.title);
+        TextView valueView = (TextView) panel.findViewById(R.id.value);
+        titleView.setText(getString(title));
+        valueView.setText(value);
     }
 }
