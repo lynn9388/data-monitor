@@ -137,7 +137,7 @@ public class CircleDisplay extends View implements OnGestureListener {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setStyle(Style.STROKE);
         mTextPaint.setTextAlign(Align.CENTER);
-        mTextPaint.setColor(Color.BLACK);
+        mTextPaint.setColor(Color.GRAY);
         mTextPaint.setTextSize(Utils.convertDpToPixel(getResources(), 24f));
 
         mDrawAnimator = ObjectAnimator.ofFloat(this, "phase", mPhase, 1.0f).setDuration(3000);
