@@ -27,76 +27,67 @@
     tools:context="com.lynn9388.datamonitor.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <LinearLayout
+    <com.philjay.circledisplay.CircleDisplay
+        android:id="@+id/data_usage_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:paddingBottom="40dp"
-        android:paddingTop="32dp">
-
-        <com.philjay.circledisplay.CircleDisplay
-            android:id="@+id/data_usage_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+        android:layout_height="240dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:paddingBottom="24dp"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:paddingTop="24dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <include
-                android:id="@+id/panel1"
-                layout="@layout/item_overview_panel" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/listDivider" />
-
-            <include
-                android:id="@+id/panel2"
-                layout="@layout/item_overview_panel" />
-
-        </LinearLayout>
+        <include
+            android:id="@+id/panel1"
+            layout="@layout/item_overview_panel" />
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
             android:background="?android:attr/listDivider" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <include
+            android:id="@+id/panel2"
+            layout="@layout/item_overview_panel" />
 
-            <include
-                android:id="@+id/panel3"
-                layout="@layout/item_overview_panel" />
+    </LinearLayout>
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/listDivider" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="?android:attr/listDivider" />
 
-            <include
-                android:id="@+id/panel4"
-                layout="@layout/item_overview_panel" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="24dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <include
+            android:id="@+id/panel3"
+            layout="@layout/item_overview_panel" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
+        <include
+            android:id="@+id/panel4"
+            layout="@layout/item_overview_panel" />
     </LinearLayout>
 
 </LinearLayout>
