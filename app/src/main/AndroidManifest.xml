@@ -51,6 +51,10 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".NetworkService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

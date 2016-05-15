@@ -48,10 +48,12 @@ public class NetworkReceiver extends BroadcastReceiver {
                 Log.d(TAG, "Network state changed: disconnected -> connected");
                 editor.putBoolean(connectedPreference, true);
                 editor.apply();
+                context.startService(new Intent(context, NetworkService.class));
             } else if (netwrokConnected && !NetworkUtil.isNetworkConnected(context)) {
                 Log.d(TAG, "Network state changed: connected -> disconnected");
                 editor.putBoolean(connectedPreference, false);
                 editor.apply();
+                context.stopService(new Intent(context, NetworkService.class));
             }
         }
     }
