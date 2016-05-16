@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ activity_main_drawer.xml
   ~ Copyright (C) 2016  Lynn
   ~
@@ -19,7 +18,9 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group_feature"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
@@ -38,17 +39,13 @@
             android:title="Tools" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+    <group android:id="@+id/group_tools">
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/nav_menu_settings" />
+        <item
+            android:id="@+id/nav_help_and_feedback"
+            android:title="@string/nav_menu_help_and_feedback" />
+    </group>
 
 </menu>

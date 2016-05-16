@@ -1,5 +1,5 @@
 /*
- * build.gradle
+ * SettingsActivity
  * Copyright (C) 2016  Lynn
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.lynn9388.datamonitor;
 
-buildscript {
-    repositories {
-        jcenter()
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+public class SettingsActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
