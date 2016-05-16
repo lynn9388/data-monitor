@@ -26,6 +26,8 @@ import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.lynn9388.datamonitor.util.NetworkUtil;
+
 public class NetworkReceiver extends BroadcastReceiver {
     private static final String TAG = NetworkReceiver.class.getName();
 

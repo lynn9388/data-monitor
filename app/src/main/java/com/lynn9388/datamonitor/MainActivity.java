@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.dao.DaoSession;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
+import com.lynn9388.datamonitor.util.NetworkUtil;
 import com.philjay.circledisplay.CircleDisplay;
 
 public class MainActivity extends AppCompatActivity
