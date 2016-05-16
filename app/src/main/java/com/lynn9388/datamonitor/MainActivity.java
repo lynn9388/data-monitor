@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -50,14 +49,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences preferences = PreferenceManager
-                .getDefaultSharedPreferences(getBaseContext());
-        boolean isFirstStart = preferences.getBoolean("FirstStart", true);
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        String firstTimePreference = "first_time";
+        boolean isFirstStart = preferences.getBoolean(firstTimePreference, true);
         if (isFirstStart) {
             startActivity(new Intent(MainActivity.this, IntroductionActivity.class));
             finish();
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("FirstStart", false);
+            editor.putBoolean(firstTimePreference, false);
             editor.apply();
         }
 
