@@ -40,8 +40,6 @@ public class NetworkService extends Service {
     private TrafficLogDao mTrafficLogDao;
     private LogTimerTask mLogTimerTask;
 
-    private long mLastMobileRxBytes;
-    private long mLastMobileTxBytes;
     private long mLastTotalRxBytes;
     private long mLastTotalTxBytes;
 
@@ -69,8 +67,6 @@ public class NetworkService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mLastMobileRxBytes = TrafficStats.getMobileRxBytes();
-        mLastMobileTxBytes = TrafficStats.getMobileTxBytes();
         mLastTotalRxBytes = TrafficStats.getTotalRxBytes();
         mLastTotalTxBytes = TrafficStats.getTotalTxBytes();
 
@@ -87,7 +83,7 @@ public class NetworkService extends Service {
             long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
             long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
 
-            TrafficLog trafficLog = null;
+            TrafficLog trafficLog;
             if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
                 trafficLog = new TrafficLog(null, new Date(), 0, 0,
                         currentTotalRxBytes - mLastTotalRxBytes,
@@ -95,14 +91,12 @@ public class NetworkService extends Service {
                         currentTotalRxBytes, currentTotalTxBytes);
             } else {
                 trafficLog = new TrafficLog(null, new Date(),
-                        currentMobileRxBytes - mLastMobileRxBytes,
-                        currentMobileTxBytes - mLastMobileTxBytes,
+                        currentTotalRxBytes - mLastTotalRxBytes,
+                        currentTotalTxBytes - mLastTotalTxBytes,
                         0, 0, currentTotalRxBytes, currentTotalTxBytes);
             }
             mTrafficLogDao.insert(trafficLog);
 
-            mLastMobileRxBytes = currentMobileRxBytes;
-            mLastMobileTxBytes = currentMobileTxBytes;
             mLastTotalRxBytes = currentTotalRxBytes;
             mLastTotalTxBytes = currentTotalTxBytes;
         }
