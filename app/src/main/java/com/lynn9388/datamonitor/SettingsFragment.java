@@ -23,14 +23,11 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import com.lynn9388.datamonitor.util.TrafficUtil;
-
-import java.util.Date;
-
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String PREF_KEY_DATA_PLAN = "pref_key_data_plan";
     public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
+    public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
     public static final String PREF_KEY_VERSION = "pref_key_version";
 
@@ -49,10 +46,10 @@ public class SettingsFragment extends PreferenceFragment
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "0");
-        findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + "MB");
+        findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + " MB");
 
         String usedData = sharedPreferences.getString(PREF_KEY_USED_DATA, "0");
-        findPreference(PREF_KEY_USED_DATA).setSummary(usedData + "MB");
+        findPreference(PREF_KEY_USED_DATA).setSummary(usedData + " MB");
 
         String verionName = BuildConfig.VERSION_NAME;
         findPreference(PREF_KEY_VERSION).setSummary("Version " + verionName);
@@ -62,12 +59,11 @@ public class SettingsFragment extends PreferenceFragment
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
             String value = sharedPreferences.getString(key, "0");
-            findPreference(key).setSummary(value + "MB");
+            findPreference(key).setSummary(value + " MB");
 
             if (PREF_KEY_USED_DATA.equals(key)) {
-                long usedDataInLog = TrafficUtil.getTotalMobileDataBytes(getActivity(),
-                        TrafficUtil.getStartOfDay(new Date()), TrafficUtil.getEndOfDay(new Date()));
-                double usedDataError = Double.valueOf(value) - usedDataInLog / (1024.0 * 1024.0);
+                String usedDataInLog = sharedPreferences.getString(PREF_KEY_USED_DATA_IN_LOG, "0");
+                float usedDataError = Float.valueOf(value) - Float.valueOf(usedDataInLog);
                 sharedPreferences.edit()
                         .putString(PREF_KEY_USED_DATA_ERROR, String.valueOf(usedDataError))
                         .apply();
