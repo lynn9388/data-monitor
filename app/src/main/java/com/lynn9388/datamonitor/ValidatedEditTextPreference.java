@@ -67,9 +67,21 @@ public class ValidatedEditTextPreference extends EditTextPreference {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String temp = String.valueOf(s);
-                if (temp.equals("0")
-                        || (!temp.equals("") && !temp.startsWith("0") && !temp.startsWith("."))) {
+                if (temp.equals("")) {
+                    button.setEnabled(false);
+                } else if (!temp.startsWith("0") && !temp.startsWith(".")) {
                     button.setEnabled(true);
+                } else if (temp.equals("0")) {
+                    button.setEnabled(true);
+                } else if (temp.startsWith("0.")) {
+                    boolean enable = false;
+                    for (int i = 2; i < s.length(); i++) {
+                        if (s.charAt(i) != '0') {
+                            enable = true;
+                            break;
+                        }
+                    }
+                    button.setEnabled(enable);
                 } else {
                     button.setEnabled(false);
                 }
