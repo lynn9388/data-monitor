@@ -20,14 +20,16 @@
 
     <PreferenceCategory android:title="@string/pref_general_title">
         <com.lynn9388.datamonitor.ValidatedEditTextPreference
-            android:defaultValue="100"
+            android:defaultValue="0"
             android:hint="MB"
+            android:inputType="number"
             android:key="pref_key_data_plan"
             android:maxLength="10"
             android:title="@string/pref_data_plan_title" />
         <com.lynn9388.datamonitor.ValidatedEditTextPreference
             android:defaultValue="0"
             android:hint="MB"
+            android:inputType="numberDecimal"
             android:key="pref_key_used_data"
             android:maxLength="10"
             android:title="@string/pref_used_data_title" />

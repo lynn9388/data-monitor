@@ -43,8 +43,11 @@ public class SettingsFragment extends PreferenceFragment
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "100");
+        String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "0");
         findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + "MB");
+
+        String usedData = sharedPreferences.getString(PREF_KEY_USED_DATA, "0");
+        findPreference(PREF_KEY_USED_DATA).setSummary(usedData + "MB");
 
         String verionName = BuildConfig.VERSION_NAME;
         findPreference(PREF_KEY_VERSION).setSummary("Version " + verionName);
@@ -52,9 +55,9 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (PREF_KEY_DATA_PLAN.equals(key)) {
-            String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "100");
-            findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + "MB");
+        if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
+            String dataPlan = sharedPreferences.getString(key, "0");
+            findPreference(key).setSummary(dataPlan + "MB");
         }
     }
 }

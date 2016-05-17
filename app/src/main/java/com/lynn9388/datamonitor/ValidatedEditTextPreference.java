@@ -25,14 +25,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.Button;
 import android.widget.EditText;
 
 /**
- * Checks if edited text is decimal number, and enable positive button or not.
+ * Checks if edited text is a valid number, and enable positive button or not.
  */
 public class ValidatedEditTextPreference extends EditTextPreference {
     public ValidatedEditTextPreference(Context context) {
@@ -60,7 +59,6 @@ public class ValidatedEditTextPreference extends EditTextPreference {
         final Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
         EditText editText = getEditText();
-        editText.setInputType(InputType.TYPE_CLASS_DATETIME);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,7 +67,8 @@ public class ValidatedEditTextPreference extends EditTextPreference {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String temp = String.valueOf(s);
-                if (temp.equals("0") || (!temp.equals("") && !temp.startsWith("0"))) {
+                if (temp.equals("0")
+                        || (!temp.equals("") && !temp.startsWith("0") && !temp.startsWith("."))) {
                     button.setEnabled(true);
                 } else {
                     button.setEnabled(false);
