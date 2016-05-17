@@ -18,13 +18,43 @@
 
 package com.lynn9388.datamonitor;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static final String PREF_KEY_DATA_PLAN = "pref_key_data_plan";
+    public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
+    public static final String PREF_KEY_VERSION = "pref_key_version";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "100");
+        findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + "MB");
+
+        String verionName = BuildConfig.VERSION_NAME;
+        findPreference(PREF_KEY_VERSION).setSummary("Version " + verionName);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (PREF_KEY_DATA_PLAN.equals(key)) {
+            String dataPlan = sharedPreferences.getString(PREF_KEY_DATA_PLAN, "100");
+            findPreference(PREF_KEY_DATA_PLAN).setSummary(dataPlan + "MB");
+        }
     }
 }
