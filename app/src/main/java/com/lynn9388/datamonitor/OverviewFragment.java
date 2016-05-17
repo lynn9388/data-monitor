@@ -62,8 +62,8 @@ public class OverviewFragment extends Fragment {
 
         initPanel(mPanel1, R.string.used_today, "--");
         initPanel(mPanel2, R.string.used_this_month, "--");
-        initPanel(mPanel3, R.string.monthly_data_plan, "--");
-        initPanel(mPanel4, R.string.remaining_this_month, "--");
+        initPanel(mPanel3, R.string.remaining_this_month, "--");
+        initPanel(mPanel4, R.string.till_next_settlement, "--");
     }
 
     private void initPanel(View panel, int title, String value) {

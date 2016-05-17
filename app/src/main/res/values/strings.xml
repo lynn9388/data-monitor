@@ -41,8 +41,8 @@
 
     <string name="used_today">Used today</string>
     <string name="used_this_month">Used this month</string>
-    <string name="monthly_data_plan">Monthly data plan</string>
     <string name="remaining_this_month">Remaining this month</string>
+    <string name="till_next_settlement">Till next settlement</string>
 
     <string name="nav_overview_title">Overview</string>
 
