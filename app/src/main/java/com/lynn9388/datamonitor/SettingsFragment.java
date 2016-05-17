@@ -23,10 +23,15 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import com.lynn9388.datamonitor.util.TrafficUtil;
+
+import java.util.Date;
+
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String PREF_KEY_DATA_PLAN = "pref_key_data_plan";
     public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
+    public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
     public static final String PREF_KEY_VERSION = "pref_key_version";
 
     @Override
@@ -56,8 +61,17 @@ public class SettingsFragment extends PreferenceFragment
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
-            String dataPlan = sharedPreferences.getString(key, "0");
-            findPreference(key).setSummary(dataPlan + "MB");
+            String value = sharedPreferences.getString(key, "0");
+            findPreference(key).setSummary(value + "MB");
+
+            if (PREF_KEY_USED_DATA.equals(key)) {
+                long usedDataInLog = TrafficUtil.getTotalMobileDataBytes(getActivity(),
+                        TrafficUtil.getStartOfDay(new Date()), TrafficUtil.getEndOfDay(new Date()));
+                long usedDataError = Long.valueOf(value) - usedDataInLog;
+                sharedPreferences.edit()
+                        .putString(PREF_KEY_USED_DATA_ERROR, String.valueOf(usedDataError))
+                        .apply();
+            }
         }
     }
 }
