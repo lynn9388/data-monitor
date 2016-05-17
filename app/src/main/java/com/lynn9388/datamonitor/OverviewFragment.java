@@ -18,7 +18,10 @@
 
 package com.lynn9388.datamonitor;
 
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +29,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lynn9388.datamonitor.util.TrafficUtil;
 import com.philjay.circledisplay.CircleDisplay;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,7 +57,7 @@ public class OverviewFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View rootView = getView();
-        CircleDisplay circleDisplay = (CircleDisplay) rootView.findViewById(R.id.data_usage_view);
+        mCircleDisplay = (CircleDisplay) rootView.findViewById(R.id.data_usage_view);
         mPanel1 = rootView.findViewById(R.id.panel1);
         mPanel2 = rootView.findViewById(R.id.panel2);
         mPanel3 = rootView.findViewById(R.id.panel3);
@@ -60,10 +68,57 @@ public class OverviewFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        initPanel(mPanel1, R.string.used_today, "--");
-        initPanel(mPanel2, R.string.used_this_month, "--");
-        initPanel(mPanel3, R.string.remaining_this_month, "--");
-        initPanel(mPanel4, R.string.till_next_settlement, "--");
+        // Get settings of data plan and used data error
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        String dataPlanValue = sharedPreferences.getString(SettingsFragment.PREF_KEY_DATA_PLAN, "0");
+        String usedDataErrorValue =
+                sharedPreferences.getString(SettingsFragment.PREF_KEY_USED_DATA_ERROR, "0");
+        long dataPlan = Long.valueOf(dataPlanValue) * 1024 * 1024;
+        long usedDataError = (long) (Float.valueOf(usedDataErrorValue) * 1024 * 1024);
+
+        // Calculate mobile data usage of today and this month
+        Date now = new Date();
+        long usedToday = TrafficUtil.getTotalMobileDataBytes(getContext(),
+                TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
+        long usedThisMonth = TrafficUtil.getTotalMobileDataBytes(getContext(),
+                TrafficUtil.getStartOfMonth(now), TrafficUtil.getEndOfMonth(now));
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SettingsFragment.PREF_KEY_USED_DATA_IN_LOG,
+                String.valueOf(usedThisMonth / (1024.0 * 1024.0)));
+        usedThisMonth += usedDataError;
+        editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
+                String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
+        editor.apply();
+
+        long leftThisMonth = dataPlan - usedThisMonth;
+        Calendar calendar = Calendar.getInstance();
+        int daysLeft = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                - calendar.get(Calendar.DAY_OF_MONTH);
+
+        float usagePercentage = (float) (100.0 * usedThisMonth / dataPlan);
+        setViewValues(usagePercentage, usedToday, usedThisMonth, leftThisMonth, daysLeft);
+    }
+
+    private void setViewValues(float usagePercentage, long usedToday, long usedThisMonth,
+                               long leftThisMonth, int daysLeft) {
+        if (usagePercentage < 50) {
+            mCircleDisplay.setColor(Color.GREEN);
+        } else if (usagePercentage < 75) {
+            mCircleDisplay.setColor(Color.YELLOW);
+        } else {
+            mCircleDisplay.setColor(Color.RED);
+        }
+        mCircleDisplay.setAnimDuration(3000);
+        mCircleDisplay.setStepSize(0.5f);
+        mCircleDisplay.setTouchEnabled(false);
+        mCircleDisplay.showValue(usagePercentage, 100f, true);
+
+        initPanel(mPanel1, R.string.used_today, getReadableValue(usedToday));
+        initPanel(mPanel2, R.string.used_this_month, getReadableValue(usedThisMonth));
+        initPanel(mPanel3, R.string.remaining_this_month, getReadableValue(leftThisMonth));
+        initPanel(mPanel4, R.string.till_next_settlement,
+                String.format(Locale.getDefault(), "%d Day", daysLeft));
     }
 
     private void initPanel(View panel, int title, String value) {
@@ -71,5 +126,17 @@ public class OverviewFragment extends Fragment {
         TextView valueView = (TextView) panel.findViewById(R.id.value);
         titleView.setText(getString(title));
         valueView.setText(value);
+    }
+
+    private String getReadableValue(long bytes) {
+        String value;
+        if (Math.abs(bytes) < 1024) {
+            value = String.valueOf(bytes) + " B";
+        } else if (Math.abs(bytes) < 1024 * 1024) {
+            value = String.format(Locale.getDefault(), "%.2f K", bytes / 1024.0);
+        } else {
+            value = String.format(Locale.getDefault(), "%.2f M", bytes / (1024.0 * 1024.0));
+        }
+        return value;
     }
 }
