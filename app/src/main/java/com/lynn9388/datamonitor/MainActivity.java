@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lynn9388.datamonitor.dao.DaoMaster;
-import com.lynn9388.datamonitor.dao.DaoSession;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
@@ -43,21 +43,16 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public static final String DATABASE_NAME = "DataMonitor.db";
 
-    private SQLiteDatabase mDatabase;
-    private DaoMaster mDaoMaster;
-    private DaoSession mDaoSession;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        String firstTimePreference = "first_time";
-        boolean isFirstStart = preferences.getBoolean(firstTimePreference, true);
-        if (isFirstStart) {
+        if (preferences.getBoolean("pref_key_has_started", true)) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("pref_key_has_started", false);
+            editor.apply();
+            PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
             startActivity(new Intent(MainActivity.this, IntroductionActivity.class));
             finish();
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(firstTimePreference, false);
-            editor.apply();
         }
 
         super.onCreate(savedInstanceState);
@@ -80,9 +75,7 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(new OverviewFragment(), getString(R.string.nav_overview_title));
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, DATABASE_NAME, null);
-        mDatabase = helper.getWritableDatabase();
-        mDaoMaster = new DaoMaster(mDatabase);
-        mDaoSession = mDaoMaster.newSession();
+        SQLiteDatabase database = helper.getWritableDatabase();
 
         if (NetworkUtil.isNetworkConnected(this)) {
             startService(new Intent(this, NetworkService.class));
