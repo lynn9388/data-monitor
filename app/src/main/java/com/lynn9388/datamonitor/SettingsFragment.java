@@ -67,7 +67,7 @@ public class SettingsFragment extends PreferenceFragment
             if (PREF_KEY_USED_DATA.equals(key)) {
                 long usedDataInLog = TrafficUtil.getTotalMobileDataBytes(getActivity(),
                         TrafficUtil.getStartOfDay(new Date()), TrafficUtil.getEndOfDay(new Date()));
-                long usedDataError = Long.valueOf(value) - usedDataInLog;
+                double usedDataError = Double.valueOf(value) - usedDataInLog / (1024.0 * 1024.0);
                 sharedPreferences.edit()
                         .putString(PREF_KEY_USED_DATA_ERROR, String.valueOf(usedDataError))
                         .apply();
