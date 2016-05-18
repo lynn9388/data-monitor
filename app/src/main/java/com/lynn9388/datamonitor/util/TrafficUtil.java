@@ -93,4 +93,11 @@ public class TrafficUtil {
         }
         return bytes;
     }
+
+    public static List<TrafficLog> getTrafficLogs(Context context, Date start, Date end) {
+        TrafficLogDao trafficLogDao = getTrafficLogDao(context);
+        return trafficLogDao.queryBuilder()
+                .where(TrafficLogDao.Properties.Time.between(start, end))
+                .list();
+    }
 }
