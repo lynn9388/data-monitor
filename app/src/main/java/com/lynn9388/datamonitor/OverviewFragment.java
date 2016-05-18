@@ -18,14 +18,13 @@
 
 package com.lynn9388.datamonitor;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,62 +36,61 @@ import com.philjay.circledisplay.CircleDisplay;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class OverviewFragment extends Fragment {
+    private static String[] sPanelPrefKeys = {"pref_key_panel0", "pref_key_panel1",
+            "pref_key_panel2", "pref_key_panel3"};
+    private static int[] sPanelIds = {R.id.panel0, R.id.panel1, R.id.panel2, R.id.panel3};
+    private static int[] sPanelTitles = {R.string.used_today, R.string.used_this_month,
+            R.string.remaining_this_month, R.string.till_next_settlement};
     private CircleDisplay mCircleDisplay;
-    private View mPanel1;
-    private View mPanel2;
-    private View mPanel3;
-    private View mPanel4;
+    private View[] mPanels;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_overview, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        View rootView = getView();
-        mCircleDisplay = (CircleDisplay) rootView.findViewById(R.id.data_usage_view);
-        mPanel1 = rootView.findViewById(R.id.panel1);
-        mPanel2 = rootView.findViewById(R.id.panel2);
-        mPanel3 = rootView.findViewById(R.id.panel3);
-        mPanel4 = rootView.findViewById(R.id.panel4);
+        mCircleDisplay = (CircleDisplay) view.findViewById(R.id.data_usage_view);
+        mPanels = new View[sPanelIds.length];
+        for (int i = 0; i < sPanelIds.length; i++) {
+            mPanels[i] = view.findViewById(sPanelIds[i]);
+        }
+        updatePanelValues();
+
+        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initPanel(mPanel1, R.string.used_today, "--");
-        initPanel(mPanel2, R.string.used_this_month, "--");
-        initPanel(mPanel3, R.string.remaining_this_month, "--");
-        initPanel(mPanel4, R.string.till_next_settlement, "--");
-
         new SetValueTask().execute();
     }
 
-    private void initPanel(View panel, int title, String value) {
-        TextView titleView = (TextView) panel.findViewById(R.id.title);
-        TextView valueView = (TextView) panel.findViewById(R.id.value);
-        titleView.setText(getString(title));
-        valueView.setText(value);
+    private void updatePanelValues() {
+        SharedPreferences localPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        for (int i = 0; i < sPanelIds.length; i++) {
+            TextView titleView = (TextView) mPanels[i].findViewById(R.id.title);
+            TextView valueView = (TextView) mPanels[i].findViewById(R.id.value);
+            titleView.setText(getString(sPanelTitles[i]));
+            valueView.setText(localPreferences.getString(sPanelPrefKeys[i], "--"));
+        }
     }
 
-    private class SetValueTask extends AsyncTask<Void, Void, Map> {
+    private class SetValueTask extends AsyncTask<Void, Void, Float> {
         @Override
-        protected Map doInBackground(Void... params) {
-            Map<Integer, Object> result = new ArrayMap<>();
-
-            // Get settings of data plan and used data error
+        protected Float doInBackground(Void... params) {
+            // Save data for panels' loading
+            SharedPreferences localPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor localEditor = localPreferences.edit();
+            // Access data from settings
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(getContext());
+
+            // Get settings of data plan and used data error
             String dataPlanValue =
                     sharedPreferences.getString(SettingsFragment.PREF_KEY_DATA_PLAN, "0");
             String usedDataErrorValue =
@@ -105,7 +103,7 @@ public class OverviewFragment extends Fragment {
             // Calculate mobile data usage of today
             long usedToday = TrafficUtil.getTotalMobileDataBytes(getContext(),
                     TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
-            result.put(R.id.panel1, usedToday);
+            localEditor.putString(sPanelPrefKeys[0], getReadableValue(usedToday));
 
             // Calculate mobile data usage of this month, and update preferences
             long usedThisMonth = TrafficUtil.getTotalMobileDataBytes(getContext(),
@@ -117,26 +115,24 @@ public class OverviewFragment extends Fragment {
             editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
                     String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
             editor.apply();
-            result.put(R.id.panel2, usedThisMonth);
+            localEditor.putString(sPanelPrefKeys[1], getReadableValue(usedThisMonth));
 
             long leftThisMonth = dataPlan - usedThisMonth;
-            result.put(R.id.panel3, leftThisMonth);
+            localEditor.putString(sPanelPrefKeys[2], getReadableValue(leftThisMonth));
 
             Calendar calendar = Calendar.getInstance();
             int daysLeft = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
                     - calendar.get(Calendar.DAY_OF_MONTH);
-            result.put(R.id.panel4, daysLeft);
+            localEditor.putString(sPanelPrefKeys[3],
+                    String.valueOf(daysLeft) + (daysLeft > 1 ? " Days" : " Day"));
 
-            float usagePercentage = (float) (100.0 * usedThisMonth / dataPlan);
-            result.put(R.id.data_usage_view, usagePercentage);
+            localEditor.apply();
 
-            return result;
+            return (float) (100.0 * usedThisMonth / dataPlan);
         }
 
         @Override
-        protected void onPostExecute(Map map) {
-            super.onPostExecute(map);
-            float usagePercentage = (float) map.get(R.id.data_usage_view);
+        protected void onPostExecute(Float usagePercentage) {
             if (usagePercentage < 50) {
                 mCircleDisplay.setColor(Color.GREEN);
             } else if (usagePercentage < 75) {
@@ -149,18 +145,7 @@ public class OverviewFragment extends Fragment {
             mCircleDisplay.setTouchEnabled(false);
             mCircleDisplay.showValue(usagePercentage, 100f, true);
 
-            setValue(mPanel1, getReadableValue((long) map.get(R.id.panel1)));
-            setValue(mPanel2, getReadableValue((long) map.get(R.id.panel2)));
-            setValue(mPanel3, getReadableValue((long) map.get(R.id.panel3)));
-
-            int daysLeft = (int) map.get(R.id.panel4);
-            String value = String.valueOf(daysLeft) + (daysLeft > 1 ? " Days" : " Day");
-            ((TextView) (mPanel4.findViewById(R.id.value))).setText(value);
-        }
-
-        private void setValue(View panel, String value) {
-            TextView textView = (TextView) panel.findViewById(R.id.value);
-            textView.setText(value);
+            updatePanelValues();
         }
 
         private String getReadableValue(long bytes) {
