@@ -44,7 +44,7 @@
     <string name="remaining_this_month">Remaining this month</string>
     <string name="till_next_settlement">Till next settlement</string>
 
-    <string name="nav_overview_title">Overview</string>
+    <string name="nav_mobile_data_title">Mobile data</string>
     <string name="nav_detail_title">Detail</string>
 
     <string name="title_activity_settings">Settings</string>

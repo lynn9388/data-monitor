@@ -22,10 +22,10 @@
         android:id="@+id/group_feature"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_overview"
+            android:id="@+id/nav_mobile_data"
             android:checked="true"
-            android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/nav_overview_title" />
+            android:icon="@drawable/ic_swap_vertical_circle_black_24dp"
+            android:title="@string/nav_mobile_data_title" />
         <item
             android:id="@+id/nav_detail"
             android:icon="@drawable/ic_assessment_black_24dp"

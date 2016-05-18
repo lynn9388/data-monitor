@@ -1,5 +1,5 @@
 <!--
-  ~ fragment_overview.xml
+  ~ fragment_mobile_dataata.xml
   ~ Copyright (C) 2016  Lynn
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.lynn9388.datamonitor.OverviewFragment">
+    tools:context=".MobileDataFragment">
 
     <com.philjay.circledisplay.CircleDisplay
         android:id="@+id/data_usage_view"
@@ -42,7 +42,7 @@
 
         <include
             android:id="@+id/panel0"
-            layout="@layout/item_overview_panel" />
+            layout="@layout/item_mobile_data_panel" />
 
         <View
             android:layout_width="1dp"
@@ -51,7 +51,7 @@
 
         <include
             android:id="@+id/panel1"
-            layout="@layout/item_overview_panel" />
+            layout="@layout/item_mobile_data_panel" />
 
     </LinearLayout>
 
@@ -74,7 +74,7 @@
 
         <include
             android:id="@+id/panel2"
-            layout="@layout/item_overview_panel" />
+            layout="@layout/item_mobile_data_panel" />
 
         <View
             android:layout_width="1dp"
@@ -83,7 +83,7 @@
 
         <include
             android:id="@+id/panel3"
-            layout="@layout/item_overview_panel" />
+            layout="@layout/item_mobile_data_panel" />
     </LinearLayout>
 
 </LinearLayout>

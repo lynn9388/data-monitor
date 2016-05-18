@@ -40,7 +40,7 @@ import java.util.Locale;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OverviewFragment extends Fragment {
+public class MobileDataFragment extends Fragment {
     private static String[] sPanelPrefKeys = {"pref_key_panel0", "pref_key_panel1",
             "pref_key_panel2", "pref_key_panel3"};
     private static int[] sPanelIds = {R.id.panel0, R.id.panel1, R.id.panel2, R.id.panel3};
@@ -53,7 +53,7 @@ public class OverviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_overview, container, false);
+        View view = inflater.inflate(R.layout.fragment_mobile_data, container, false);
 
         mCircleDisplay = (CircleDisplay) view.findViewById(R.id.data_usage_view);
         mPanels = new View[sPanelIds.length];

@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_overview) {
-            replaceFragment(new OverviewFragment(), getString(R.string.nav_overview_title));
+        if (id == R.id.nav_mobile_data) {
+            replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
         } else if (id == R.id.nav_detail) {
             replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
         } else if (id == R.id.nav_slideshow) {
