@@ -36,6 +36,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.lynn9388.datamonitor.dao.DaoMaster;
+import com.lynn9388.datamonitor.fragment.DetailFragment;
+import com.lynn9388.datamonitor.fragment.MobileDataFragment;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 

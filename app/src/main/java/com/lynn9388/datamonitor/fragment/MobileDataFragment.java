@@ -1,5 +1,5 @@
 /*
- * OverviewFragment
+ * MobileDataFragment
  * Copyright (C) 2016  Lynn
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.lynn9388.datamonitor;
+package com.lynn9388.datamonitor.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.util.TrafficUtil;
 import com.philjay.circledisplay.CircleDisplay;
 

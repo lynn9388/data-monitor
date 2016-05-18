@@ -21,6 +21,8 @@ package com.lynn9388.datamonitor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.lynn9388.datamonitor.fragment.SettingsFragment;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
