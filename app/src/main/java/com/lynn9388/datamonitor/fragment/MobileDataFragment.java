@@ -160,15 +160,18 @@ public class MobileDataFragment extends Fragment {
         }
 
         private String getReadableValue(long bytes) {
-            String value;
-            if (Math.abs(bytes) < 1024) {
-                value = String.valueOf(bytes) + " B";
-            } else if (Math.abs(bytes) < 1024 * 1024) {
-                value = String.format(Locale.getDefault(), "%.2f K", bytes / 1024.0);
-            } else {
-                value = String.format(Locale.getDefault(), "%.2f M", bytes / (1024.0 * 1024.0));
+            double value = Math.abs(bytes);
+            String unit = "";
+            if (value < 1024) {
+                unit = "B";
+            } else if ((value /= 1024.0) < 1024) {
+                unit = "KB";
+            } else if ((value /= 1024.0) < 1024) {
+                unit = "MB";
+            } else if ((value /= 1024.0) < 1024) {
+                unit = "GB";
             }
-            return value;
+            return String.format(Locale.getDefault(), "%.2f %s", value, unit);
         }
     }
 }
