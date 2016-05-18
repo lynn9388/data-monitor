@@ -112,7 +112,7 @@ public class MobileDataFragment extends Fragment {
             // Calculate mobile data usage of today
             long usedToday = TrafficUtil.getTotalMobileDataBytes(getContext(),
                     TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
-            localEditor.putString(sPanelPrefKeys[0], getReadableValue(usedToday));
+            localEditor.putString(sPanelPrefKeys[0], TrafficUtil.getReadableValue(usedToday));
 
             // Calculate mobile data usage of this month, and update preferences
             long usedThisMonth = TrafficUtil.getTotalMobileDataBytes(getContext(),
@@ -124,10 +124,10 @@ public class MobileDataFragment extends Fragment {
             editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
                     String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
             editor.apply();
-            localEditor.putString(sPanelPrefKeys[1], getReadableValue(usedThisMonth));
+            localEditor.putString(sPanelPrefKeys[1], TrafficUtil.getReadableValue(usedThisMonth));
 
             long leftThisMonth = dataPlan - usedThisMonth;
-            localEditor.putString(sPanelPrefKeys[2], getReadableValue(leftThisMonth));
+            localEditor.putString(sPanelPrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
 
             Calendar calendar = Calendar.getInstance();
             int daysLeft = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -157,21 +157,6 @@ public class MobileDataFragment extends Fragment {
 
                 updatePanelValues();
             }
-        }
-
-        private String getReadableValue(long bytes) {
-            double value = Math.abs(bytes);
-            String unit = "";
-            if (value < 1024) {
-                unit = "B";
-            } else if ((value /= 1024.0) < 1024) {
-                unit = "KB";
-            } else if ((value /= 1024.0) < 1024) {
-                unit = "MB";
-            } else if ((value /= 1024.0) < 1024) {
-                unit = "GB";
-            }
-            return String.format(Locale.getDefault(), "%.2f %s", value, unit);
         }
     }
 }

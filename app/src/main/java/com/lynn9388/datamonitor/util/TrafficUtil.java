@@ -32,6 +32,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TrafficUtil {
     private static TrafficLogDao getTrafficLogDao(Context context) {
@@ -63,6 +64,21 @@ public class TrafficUtil {
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         return getEndOfDay(calendar.getTime());
+    }
+
+    public static String getReadableValue(long bytes) {
+        double value = Math.abs(bytes);
+        String unit = "";
+        if (value < 1024) {
+            unit = "B";
+        } else if ((value /= 1024.0) < 1024) {
+            unit = "KB";
+        } else if ((value /= 1024.0) < 1024) {
+            unit = "MB";
+        } else if ((value /= 1024.0) < 1024) {
+            unit = "GB";
+        }
+        return String.format(Locale.getDefault(), "%.2f %s", value, unit);
     }
 
     public static long getTotalMobileDataBytes(Context context, Date start, Date end) {
