@@ -27,9 +27,9 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/nav_overview_title" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_detail"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="@string/nav_detail_title" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

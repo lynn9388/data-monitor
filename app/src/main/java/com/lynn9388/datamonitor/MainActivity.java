@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        replaceFragment(new OverviewFragment(), getString(R.string.nav_overview_title));
+        replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, DATABASE_NAME, null);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_overview) {
             replaceFragment(new OverviewFragment(), getString(R.string.nav_overview_title));
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_detail) {
+            replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
