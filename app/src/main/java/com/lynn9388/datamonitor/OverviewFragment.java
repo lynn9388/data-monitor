@@ -48,6 +48,7 @@ public class OverviewFragment extends Fragment {
             R.string.remaining_this_month, R.string.till_next_settlement};
     private CircleDisplay mCircleDisplay;
     private View[] mPanels;
+    private SetValueTask setValueTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,7 +68,14 @@ public class OverviewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new SetValueTask().execute();
+        setValueTask = new SetValueTask();
+        setValueTask.execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setValueTask.cancel(true);
     }
 
     private void updatePanelValues() {
@@ -133,19 +141,21 @@ public class OverviewFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Float usagePercentage) {
-            if (usagePercentage < 50) {
-                mCircleDisplay.setColor(Color.GREEN);
-            } else if (usagePercentage < 75) {
-                mCircleDisplay.setColor(Color.YELLOW);
-            } else {
-                mCircleDisplay.setColor(Color.RED);
-            }
-            mCircleDisplay.setAnimDuration(3000);
-            mCircleDisplay.setStepSize(0.5f);
-            mCircleDisplay.setTouchEnabled(false);
-            mCircleDisplay.showValue(usagePercentage, 100f, true);
+            if (!isCancelled()) {
+                if (usagePercentage < 50) {
+                    mCircleDisplay.setColor(Color.GREEN);
+                } else if (usagePercentage < 75) {
+                    mCircleDisplay.setColor(Color.YELLOW);
+                } else {
+                    mCircleDisplay.setColor(Color.RED);
+                }
+                mCircleDisplay.setAnimDuration(3000);
+                mCircleDisplay.setStepSize(0.5f);
+                mCircleDisplay.setTouchEnabled(false);
+                mCircleDisplay.showValue(usagePercentage, 100f, true);
 
-            updatePanelValues();
+                updatePanelValues();
+            }
         }
 
         private String getReadableValue(long bytes) {
