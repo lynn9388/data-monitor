@@ -21,6 +21,7 @@ package com.lynn9388.datamonitor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -132,8 +133,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-        } else if (id == R.id.nav_help_and_feedback) {
-
+        } else if (id == R.id.nav_send_feedback) {
+            sendFeedback();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -152,5 +153,14 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_content, fragment).commit();
         getSupportActionBar().setTitle(title);
+    }
+
+    private void sendFeedback() {
+        String addresses = "lynn9388@gmail.com";
+        String subject = getString(R.string.app_name) + " Feedback/Bug Report (v"
+                + BuildConfig.VERSION_NAME + ")";
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", addresses, null));
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        startActivity(Intent.createChooser(intent, "Report Problem"));
     }
 }
