@@ -46,7 +46,7 @@
             android:paddingTop="24dp">
 
             <include
-                android:id="@+id/panel1"
+                android:id="@+id/panel0"
                 layout="@layout/item_overview_panel" />
 
             <View
@@ -55,7 +55,7 @@
                 android:background="?android:attr/listDivider" />
 
             <include
-                android:id="@+id/panel2"
+                android:id="@+id/panel1"
                 layout="@layout/item_overview_panel" />
 
         </LinearLayout>
@@ -78,7 +78,7 @@
             android:paddingRight="16dp">
 
             <include
-                android:id="@+id/panel3"
+                android:id="@+id/panel2"
                 layout="@layout/item_overview_panel" />
 
             <View
@@ -87,7 +87,7 @@
                 android:background="?android:attr/listDivider" />
 
             <include
-                android:id="@+id/panel4"
+                android:id="@+id/panel3"
                 layout="@layout/item_overview_panel" />
         </LinearLayout>
     </LinearLayout>
