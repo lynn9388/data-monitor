@@ -48,4 +48,5 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }

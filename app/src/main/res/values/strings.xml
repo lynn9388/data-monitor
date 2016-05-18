@@ -58,4 +58,13 @@
     <string name="pref_about_title">ABOUT</string>
     <string name="pref_usage_policy_title">Usage Policy</string>
     <string name="pref_usage_policy_summary">Data Monitor is for personal and non-commercial use only.</string>
+
+    <string name="detail_data_type_header">Data Type</string>
+    <string name="detail_total_header">Total</string>
+    <string name="detail_percent_header">Percent(%)</string>
+
+    <string name="mobile_down">Mobile ↑</string>
+    <string name="mobile_up">Mobile ↓</string>
+    <string name="wifi_down">Wifi ↑</string>
+    <string name="wifi_up">Wifi ↓</string>
 </resources>
