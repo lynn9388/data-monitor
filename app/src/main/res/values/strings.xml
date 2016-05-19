@@ -52,6 +52,7 @@
     <string name="nav_menu_send_feedback">Send feedback</string>
 
     <string name="pref_general_title">GENERAL</string>
+    <string name="pref_enable_data_monitoring_title">Data monitoring</string>
     <string name="pref_data_plan_title">Monthly data plan</string>
     <string name="pref_used_data_title">Used data</string>
 

@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
+import com.lynn9388.datamonitor.fragment.SettingsFragment;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
@@ -80,7 +81,9 @@ public class MainActivity extends AppCompatActivity
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, DATABASE_NAME, null);
         SQLiteDatabase database = helper.getWritableDatabase();
 
-        if (NetworkUtil.isNetworkConnected(this)) {
+        boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);
+        if (NetworkUtil.isNetworkConnected(this) && isDataMonitoringEnabled) {
             startService(new Intent(this, NetworkService.class));
         }
     }

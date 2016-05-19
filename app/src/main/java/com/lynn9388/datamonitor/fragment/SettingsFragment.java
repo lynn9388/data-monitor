@@ -18,21 +18,31 @@
 
 package com.lynn9388.datamonitor.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.lynn9388.datamonitor.BuildConfig;
+import com.lynn9388.datamonitor.NetworkReceiver;
+import com.lynn9388.datamonitor.NetworkService;
 import com.lynn9388.datamonitor.R;
+import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static final String PREF_KEY_ENABLE_DATA_MONITORING = "pref_key_enable_data_monitoring";
     public static final String PREF_KEY_DATA_PLAN = "pref_key_data_plan";
     public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
     public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
     public static final String PREF_KEY_VERSION = "pref_key_version";
+    private static final String TAG = SettingsFragment.class.getName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +70,27 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
+        if (PREF_KEY_ENABLE_DATA_MONITORING.equals(key)) {
+            Context context = getActivity();
+            boolean enabled = sharedPreferences.getBoolean(key, true);
+            PackageManager packageManager = context.getPackageManager();
+            ComponentName componentName = new ComponentName(context, NetworkReceiver.class);
+            if (enabled) {
+                Log.d(TAG, "NetworkReceiver state: enabled");
+                packageManager.setComponentEnabledSetting(componentName,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+                if (NetworkUtil.isNetworkConnected(context)) {
+                    context.startService(new Intent(context, NetworkService.class));
+                }
+            } else {
+                Log.d(TAG, "NetworkReceiver state: disabled");
+                packageManager.setComponentEnabledSetting(componentName,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
+                context.stopService(new Intent(context, NetworkService.class));
+            }
+        } else if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
             String value = sharedPreferences.getString(key, "0");
             findPreference(key).setSummary(value + " MB");
 

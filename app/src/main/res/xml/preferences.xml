@@ -19,6 +19,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_general_title">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_key_enable_data_monitoring"
+            android:title="@string/pref_enable_data_monitoring_title" />
+
         <com.lynn9388.datamonitor.ValidatedEditTextPreference
             android:defaultValue="0"
             android:hint="MB"
@@ -26,6 +32,7 @@
             android:key="pref_key_data_plan"
             android:maxLength="10"
             android:title="@string/pref_data_plan_title" />
+
         <com.lynn9388.datamonitor.ValidatedEditTextPreference
             android:defaultValue="0"
             android:hint="MB"
@@ -33,15 +40,19 @@
             android:key="pref_key_used_data"
             android:maxLength="10"
             android:title="@string/pref_used_data_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_about_title">
+
         <Preference
             android:summary="@string/pref_usage_policy_summary"
             android:title="@string/pref_usage_policy_title" />
+
         <Preference
             android:key="pref_key_version"
             android:title="@string/app_name" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
