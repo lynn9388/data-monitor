@@ -20,7 +20,7 @@
 
     <PreferenceCategory android:title="@string/pref_general_title">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="pref_key_enable_data_monitoring"
             android:title="@string/pref_enable_data_monitoring_title" />
