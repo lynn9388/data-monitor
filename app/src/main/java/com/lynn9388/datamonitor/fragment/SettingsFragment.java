@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -32,6 +33,7 @@ import com.lynn9388.datamonitor.BuildConfig;
 import com.lynn9388.datamonitor.NetworkReceiver;
 import com.lynn9388.datamonitor.NetworkService;
 import com.lynn9388.datamonitor.R;
+import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class SettingsFragment extends PreferenceFragment
@@ -41,7 +43,9 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
     public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
-    public static final String PREF_KEY_VERSION = "pref_key_version";
+
+    private static final String PREF_KEY_REVIEW_INTRODUCTION = "pref_key_review_introduction";
+    private static final String PREF_KEY_VERSION = "pref_key_version";
     private static final String TAG = SettingsFragment.class.getName();
 
     @Override
@@ -63,6 +67,15 @@ public class SettingsFragment extends PreferenceFragment
 
         String usedData = sharedPreferences.getString(PREF_KEY_USED_DATA, "0");
         findPreference(PREF_KEY_USED_DATA).setSummary(usedData + " MB");
+
+        findPreference(PREF_KEY_REVIEW_INTRODUCTION).setOnPreferenceClickListener(
+                new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        startActivity(new Intent(getActivity(), IntroductionActivity.class));
+                        return false;
+                    }
+                });
 
         String verionName = BuildConfig.VERSION_NAME;
         findPreference(PREF_KEY_VERSION).setSummary("Version " + verionName);
