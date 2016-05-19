@@ -63,8 +63,8 @@
     <string name="detail_total_header">Total</string>
     <string name="detail_percent_header">Percent(%)</string>
 
-    <string name="mobile_down">Mobile ↑</string>
-    <string name="mobile_up">Mobile ↓</string>
-    <string name="wifi_down">Wifi ↑</string>
-    <string name="wifi_up">Wifi ↓</string>
+    <string name="mobile_down">Mobile ↓</string>
+    <string name="mobile_up">Mobile ↑</string>
+    <string name="wifi_down">Wifi ↓</string>
+    <string name="wifi_up">Wifi ↑</string>
 </resources>
