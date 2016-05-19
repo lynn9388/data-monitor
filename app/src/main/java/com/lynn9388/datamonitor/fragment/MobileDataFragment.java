@@ -52,7 +52,7 @@ public class MobileDataFragment extends Fragment {
     private View[] mPanels;
 
     private SharedPreferences mSharedPreferences;
-    private UpdateTask mUpdateTask;
+    private UpdateDataTask mUpdateDataTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +66,7 @@ public class MobileDataFragment extends Fragment {
         }
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        updatePanels(true);
+        updateViews(true);
 
         return view;
     }
@@ -74,17 +74,17 @@ public class MobileDataFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mUpdateTask = new UpdateTask();
-        mUpdateTask.execute();
+        mUpdateDataTask = new UpdateDataTask();
+        mUpdateDataTask.execute();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUpdateTask.cancel(true);
+        mUpdateDataTask.cancel(true);
     }
 
-    private void updatePanels(boolean animated) {
+    private void updateViews(boolean animated) {
         float usagePercentage = mSharedPreferences.getFloat(sUsagePercentagePrefKey, 0f);
         if (usagePercentage < 50) {
             mCircleDisplay.setColor(Color.GREEN);
@@ -106,7 +106,7 @@ public class MobileDataFragment extends Fragment {
         }
     }
 
-    private class UpdateTask extends AsyncTask<Void, Void, Void> {
+    private class UpdateDataTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             // Get settings of data plan and used data error
@@ -155,7 +155,7 @@ public class MobileDataFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!isCancelled()) {
-                updatePanels(false);
+                updateViews(false);
             }
         }
     }
