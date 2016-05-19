@@ -31,9 +31,9 @@
             android:icon="@drawable/ic_assessment_black_24dp"
             android:title="@string/nav_detail_title" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_realtime"
+            android:icon="@drawable/ic_timeline_black_24dp"
+            android:title="@string/nav_realtime_title" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

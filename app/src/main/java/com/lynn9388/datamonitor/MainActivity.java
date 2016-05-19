@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
+import com.lynn9388.datamonitor.fragment.RealtimeFragment;
 import com.lynn9388.datamonitor.fragment.SettingsFragment;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
+        replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, DATABASE_NAME, null);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -130,8 +131,8 @@ public class MainActivity extends AppCompatActivity
             replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
         } else if (id == R.id.nav_detail) {
             replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_realtime) {
+            replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_settings) {

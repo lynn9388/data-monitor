@@ -40,7 +40,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
     compile project(':appintro')
     compile project(':circledisplay')
     compile 'com.android.support:support-v4:23.4.0'
@@ -49,4 +48,5 @@ dependencies {
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    testCompile 'junit:junit:4.12'
 }
