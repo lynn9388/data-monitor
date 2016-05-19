@@ -74,7 +74,7 @@ public class DetailFragment extends Fragment {
         mChart.setUsePercentValues(true);
         mChart.getLegend().setEnabled(false);
         mChart.setDescription("");
-        mChart.setCenterTextSize(10f);
+        mChart.setCenterTextSize(14f);
         mChart.animateY(3000, Easing.EasingOption.EaseInOutQuad);
 
         for (int i = 0; i < sRowViewIds.length; i++) {

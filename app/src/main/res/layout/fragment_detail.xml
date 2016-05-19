@@ -43,7 +43,7 @@
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:text="@string/detail_data_type_header"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -52,7 +52,7 @@
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:text="@string/detail_total_header"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -61,7 +61,7 @@
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:text="@string/detail_percent_header"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
