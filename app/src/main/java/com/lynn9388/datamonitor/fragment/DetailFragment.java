@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -149,8 +150,13 @@ public class DetailFragment extends Fragment {
         }
 
         PieDataSet dataSet = new PieDataSet(entries1, "Detail");
-        int colors[] = {Color.rgb(217, 80, 138), Color.rgb(254, 149, 7),
-                Color.rgb(106, 167, 134), Color.rgb(53, 194, 209)};
+
+        int colors[] = {
+                ContextCompat.getColor(getContext(), R.color.colorMobileDown),
+                ContextCompat.getColor(getContext(), R.color.colorMobileUp),
+                ContextCompat.getColor(getContext(), R.color.colorWifiDown),
+                ContextCompat.getColor(getContext(), R.color.colorWifiUp)
+        };
         dataSet.setColors(colors);
         dataSet.setValueTextColor(Color.WHITE);
         dataSet.setValueTextSize(12f);

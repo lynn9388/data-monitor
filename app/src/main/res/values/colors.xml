@@ -21,4 +21,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#4CAF50</color>
+
+    <color name="colorMobileDown">#D9508A</color>
+    <color name="colorMobileUp">#FE9507</color>
+    <color name="colorWifiDown">#6AA786</color>
+    <color name="colorWifiUp">#35C2D1</color>
 </resources>
