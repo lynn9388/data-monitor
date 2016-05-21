@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
 
-    private static final String PREF_KEY_REVIEW_INTRODUCTION = "pref_key_review_introduction";
+    private static final String PREF_KEY_INTRODUCTION = "pref_key_introduction";
     private static final String PREF_KEY_VERSION = "pref_key_version";
     private static final String TAG = SettingsFragment.class.getName();
 
@@ -68,7 +68,7 @@ public class SettingsFragment extends PreferenceFragment
         String usedData = sharedPreferences.getString(PREF_KEY_USED_DATA, "0");
         findPreference(PREF_KEY_USED_DATA).setSummary(usedData + " MB");
 
-        findPreference(PREF_KEY_REVIEW_INTRODUCTION).setOnPreferenceClickListener(
+        findPreference(PREF_KEY_INTRODUCTION).setOnPreferenceClickListener(
                 new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {

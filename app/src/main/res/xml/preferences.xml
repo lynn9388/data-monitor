@@ -46,8 +46,8 @@
     <PreferenceCategory android:title="@string/pref_about_title">
 
         <Preference
-            android:key="pref_key_review_introduction"
-            android:title="@string/pref_review_introduction_title" />
+            android:key="pref_key_introduction"
+            android:title="@string/pref_introduction_title" />
 
         <Preference
             android:summary="@string/pref_usage_policy_summary"

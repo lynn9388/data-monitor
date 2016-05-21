@@ -58,7 +58,7 @@
     <string name="pref_used_data_title">Used data</string>
 
     <string name="pref_about_title">ABOUT</string>
-    <string name="pref_review_introduction_title">Review Introduction</string>
+    <string name="pref_introduction_title">Introduction</string>
     <string name="pref_usage_policy_title">Usage Policy</string>
     <string name="pref_usage_policy_summary">Data Monitor is for personal and non-commercial use only.</string>
 
