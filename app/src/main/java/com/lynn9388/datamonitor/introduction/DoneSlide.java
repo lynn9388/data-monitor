@@ -19,6 +19,8 @@
 package com.lynn9388.datamonitor.introduction;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.lynn9388.datamonitor.MainActivity;
@@ -26,7 +28,13 @@ import com.lynn9388.datamonitor.MainActivity;
 public class DoneSlide extends SlideFragment<DoneSlide> {
     @Override
     public void onClick(View v) {
-        startActivity(new Intent(getContext(), MainActivity.class));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (!preferences.getBoolean(MainActivity.PREF_KEY_HAS_OPENED, false)) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(MainActivity.PREF_KEY_HAS_OPENED, true);
+            editor.apply();
+            startActivity(new Intent(getContext(), MainActivity.class));
+        }
         getActivity().finish();
     }
 }

@@ -46,15 +46,15 @@ import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    // Indicates whether user has opened the app before
+    public static final String PREF_KEY_HAS_OPENED = "pref_key_has_opened";
+
     public static final String DATABASE_NAME = "DataMonitor.db";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        if (preferences.getBoolean("pref_key_has_started", true)) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("pref_key_has_started", false);
-            editor.apply();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!preferences.getBoolean(PREF_KEY_HAS_OPENED, false)) {
             PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
             startActivity(new Intent(MainActivity.this, IntroductionActivity.class));
             finish();
