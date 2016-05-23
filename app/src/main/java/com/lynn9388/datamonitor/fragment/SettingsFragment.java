@@ -34,6 +34,7 @@ import com.lynn9388.datamonitor.NetworkReceiver;
 import com.lynn9388.datamonitor.NetworkService;
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
+import com.lynn9388.datamonitor.preference.WarningSettingPreference;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class SettingsFragment extends PreferenceFragment
@@ -43,6 +44,8 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_USED_DATA = "pref_key_used_data";
     public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
+
+    public static final String PREF_KEY_WARNING_VALUE = "pref_key_warning_value";
 
     private static final String PREF_KEY_INTRODUCTION = "pref_key_introduction";
     private static final String PREF_KEY_VERSION = "pref_key_version";
@@ -107,13 +110,16 @@ public class SettingsFragment extends PreferenceFragment
             String value = sharedPreferences.getString(key, "0");
             findPreference(key).setSummary(value + " MB");
 
-            if (PREF_KEY_USED_DATA.equals(key)) {
-                String usedDataInLog = sharedPreferences.getString(PREF_KEY_USED_DATA_IN_LOG, "0");
-                float usedDataError = Float.valueOf(value) - Float.valueOf(usedDataInLog);
-                sharedPreferences.edit()
-                        .putString(PREF_KEY_USED_DATA_ERROR, String.valueOf(usedDataError))
-                        .apply();
-            }
+            ((WarningSettingPreference) findPreference(PREF_KEY_WARNING_VALUE)).updateWarningValue();
+        } else if (PREF_KEY_USED_DATA.equals(key)) {
+            String value = sharedPreferences.getString(key, "0");
+            findPreference(key).setSummary(value + " MB");
+
+            String usedDataInLog = sharedPreferences.getString(PREF_KEY_USED_DATA_IN_LOG, "0");
+            float usedDataError = Float.valueOf(value) - Float.valueOf(usedDataInLog);
+            sharedPreferences.edit()
+                    .putString(PREF_KEY_USED_DATA_ERROR, String.valueOf(usedDataError))
+                    .apply();
         }
     }
 }
