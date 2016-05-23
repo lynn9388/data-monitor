@@ -51,6 +51,14 @@ public class NetworkReceiver extends BroadcastReceiver {
                 editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, false);
                 context.stopService(new Intent(context, NetworkService.class));
             }
+        } else if (Intent.ACTION_PACKAGE_ADDED.equals(intent.getAction())) {
+            int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+            String packageName = intent.getData().getEncodedSchemeSpecificPart();
+            Log.d(TAG, "Package added: " + uid + " " + packageName);
+        } else if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
+            int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+            String packageName = intent.getData().getEncodedSchemeSpecificPart();
+            Log.d(TAG, "Package removed: " + uid + " " + packageName);
         }
 
         editor.apply();
