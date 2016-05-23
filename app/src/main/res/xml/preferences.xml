@@ -16,7 +16,8 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_general_title">
 
@@ -40,6 +41,19 @@
             android:key="pref_key_used_data"
             android:maxLength="10"
             android:title="@string/pref_used_data_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_advanced_title">
+
+        <com.lynn9388.datamonitor.preference.WarningSettingPreference
+            android:defaultValue="50"
+            android:key="pref_key_warning_value"
+            android:layout="@layout/preference_seek_bar"
+            android:title="@string/pref_warning_value_title"
+            app:interval="1"
+            app:maxValue="100"
+            app:minValue="0" />
 
     </PreferenceCategory>
 
