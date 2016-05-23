@@ -25,7 +25,7 @@
             android:key="pref_key_enable_data_monitoring"
             android:title="@string/pref_enable_data_monitoring_title" />
 
-        <com.lynn9388.datamonitor.ValidatedEditTextPreference
+        <com.lynn9388.datamonitor.preference.ValidatedEditTextPreference
             android:defaultValue="0"
             android:hint="MB"
             android:inputType="number"
@@ -33,7 +33,7 @@
             android:maxLength="10"
             android:title="@string/pref_data_plan_title" />
 
-        <com.lynn9388.datamonitor.ValidatedEditTextPreference
+        <com.lynn9388.datamonitor.preference.ValidatedEditTextPreference
             android:defaultValue="0"
             android:hint="MB"
             android:inputType="numberDecimal"

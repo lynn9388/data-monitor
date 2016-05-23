@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.lynn9388.datamonitor;
+package com.lynn9388.datamonitor.preference;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;

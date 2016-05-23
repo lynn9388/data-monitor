@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.lynn9388.datamonitor;
+package com.lynn9388.datamonitor.preference;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -27,6 +27,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.lynn9388.datamonitor.R;
 
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener {
     private static final String TAG = SeekBarPreference.class.getName();
