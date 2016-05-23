@@ -31,7 +31,7 @@ public class NetworkUtil {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    public static MobileNetworkType getMobileNetworkType(Context context) {
+    public static NetworkType getMobileNetworkType(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
         int networkType = telephonyManager.getNetworkType();
@@ -41,7 +41,7 @@ public class NetworkUtil {
             case TelephonyManager.NETWORK_TYPE_CDMA:
             case TelephonyManager.NETWORK_TYPE_1xRTT:
             case TelephonyManager.NETWORK_TYPE_IDEN:
-                return MobileNetworkType.NETWORK_TYPE_2G;
+                return NetworkType.NETWORK_TYPE_2G;
             case TelephonyManager.NETWORK_TYPE_UMTS:
             case TelephonyManager.NETWORK_TYPE_EVDO_0:
             case TelephonyManager.NETWORK_TYPE_EVDO_A:
@@ -51,23 +51,24 @@ public class NetworkUtil {
             case TelephonyManager.NETWORK_TYPE_EVDO_B:
             case TelephonyManager.NETWORK_TYPE_EHRPD:
             case TelephonyManager.NETWORK_TYPE_HSPAP:
-                return MobileNetworkType.NETWORK_TYPE_3G;
+                return NetworkType.NETWORK_TYPE_3G;
             case TelephonyManager.NETWORK_TYPE_LTE:
-                return MobileNetworkType.NETWORK_TYPE_4G;
+                return NetworkType.NETWORK_TYPE_4G;
             default:
-                return MobileNetworkType.NETWORK_TYPE_UNKNOWN;
+                return NetworkType.NETWORK_TYPE_UNKNOWN;
         }
     }
 
-    public enum MobileNetworkType {
+    public enum NetworkType {
         NETWORK_TYPE_2G("2G"),
         NETWORK_TYPE_3G("3G"),
         NETWORK_TYPE_4G("4G"),
+        NETWORK_TYPE_WIFI("Wifi"),
         NETWORK_TYPE_UNKNOWN("Unknown");
 
         private String value;
 
-        MobileNetworkType(String value) {
+        NetworkType(String value) {
             this.value = value;
         }
 
