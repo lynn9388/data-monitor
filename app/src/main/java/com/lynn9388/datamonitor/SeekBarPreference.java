@@ -20,6 +20,7 @@ package com.lynn9388.datamonitor;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.Preference;
 import android.util.AttributeSet;
@@ -33,7 +34,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     private static final int DEFAULT_MIN_VALUE = 0;
     private static final int DEFAULT_MAX_VALUE = 100;
     private static final int DEFAULT_INTERVAL = 1;
-    private static final int DEFAULT_CURRENT_VALUE = 50;
+    private static final int DEFAULT_PROGRESS = 50;
 
     private int mMinValue;
     private int mMaxValue;
@@ -46,39 +47,46 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 
     public SeekBarPreference(Context context) {
         super(context);
-        initPreference(null);
+        init(null);
     }
 
     public SeekBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initPreference(attrs);
+        init(attrs);
     }
 
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initPreference(attrs);
+        init(attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initPreference(attrs);
+        init(attrs);
     }
 
-    private void initPreference(AttributeSet attrs) {
+    private void init(AttributeSet attrs) {
         setLayoutResource(R.layout.preference_seek_bar);
 
-        mMinValue = DEFAULT_MIN_VALUE;
-        mMaxValue = DEFAULT_MAX_VALUE;
-        mInterval = DEFAULT_INTERVAL;
         if (attrs == null) {
-            mProgress = DEFAULT_CURRENT_VALUE;
+            mMinValue = DEFAULT_MIN_VALUE;
+            mMaxValue = DEFAULT_MAX_VALUE;
+            mInterval = DEFAULT_INTERVAL;
+            mProgress = DEFAULT_PROGRESS;
         } else {
-            String namespace = "http://schemas.android.com/apk/res/android";
-            mProgress = attrs.getAttributeIntValue(namespace, "defaultValue",
-                    DEFAULT_CURRENT_VALUE);
-            mTitle = attrs.getAttributeValue(namespace, "title");
-            mSummary = attrs.getAttributeValue(namespace, "summary");
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
+            try {
+                mMinValue = a.getInt(R.styleable.SeekBarPreference_minValue, DEFAULT_MIN_VALUE);
+                mMaxValue = a.getInt(R.styleable.SeekBarPreference_maxValue, DEFAULT_MAX_VALUE);
+                mInterval = a.getInt(R.styleable.SeekBarPreference_interval, DEFAULT_INTERVAL);
+                mTitle = a.getString(R.styleable.SeekBarPreference_android_title);
+                mSummary = a.getString(R.styleable.SeekBarPreference_android_summary);
+                mProgress = a.getInt(R.styleable.SeekBarPreference_android_defaultValue,
+                        DEFAULT_PROGRESS);
+            } finally {
+                a.recycle();
+            }
         }
     }
 
@@ -86,8 +94,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     public void onBindView(View view) {
         super.onBindView(view);
 
-        TextView titleView = (TextView) view.findViewById(R.id.title);
-        TextView summaryView = (TextView) view.findViewById(R.id.summary);
+        TextView titleView = (TextView) view.findViewById(android.R.id.title);
+        TextView summaryView = (TextView) view.findViewById(android.R.id.summary);
         mSeekBarView = (SeekBar) view.findViewById(R.id.seek_bar);
 
         titleView.setText(mTitle);
