@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);
         if (NetworkUtil.isNetworkConnected(this) && isDataMonitoringEnabled) {
+            preferences.edit().putBoolean(NetworkReceiver.PREF_KEY_NETWORK_CONNECTED, true).apply();
             startService(new Intent(this, NetworkService.class));
         }
     }

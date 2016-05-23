@@ -97,6 +97,9 @@ public class SettingsFragment extends PreferenceFragment
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                         PackageManager.DONT_KILL_APP);
                 if (NetworkUtil.isNetworkConnected(context)) {
+                    sharedPreferences.edit()
+                            .putBoolean(NetworkReceiver.PREF_KEY_NETWORK_CONNECTED, true)
+                            .apply();
                     context.startService(new Intent(context, NetworkService.class));
                 }
             } else {

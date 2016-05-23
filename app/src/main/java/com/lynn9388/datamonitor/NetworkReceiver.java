@@ -29,34 +29,30 @@ import android.util.Log;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {
+    public static final String PREF_KEY_NETWORK_CONNECTED = "pref_key_network_connected";
     private static final String TAG = NetworkReceiver.class.getName();
-
-    public NetworkReceiver() {
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-        String connectedPreference = "NetworkConnected";
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            editor.putBoolean(connectedPreference, false);
-            editor.apply();
+            editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, false);
         } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-            boolean netwrokConnected = preferences.getBoolean(connectedPreference, false);
+            boolean netwrokConnected = preferences.getBoolean(PREF_KEY_NETWORK_CONNECTED, false);
 
             if (!netwrokConnected && NetworkUtil.isNetworkConnected(context)) {
                 Log.d(TAG, "Network state changed: disconnected -> connected");
-                editor.putBoolean(connectedPreference, true);
-                editor.apply();
+                editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, true);
                 context.startService(new Intent(context, NetworkService.class));
             } else if (netwrokConnected && !NetworkUtil.isNetworkConnected(context)) {
                 Log.d(TAG, "Network state changed: connected -> disconnected");
-                editor.putBoolean(connectedPreference, false);
-                editor.apply();
+                editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, false);
                 context.stopService(new Intent(context, NetworkService.class));
             }
         }
+
+        editor.apply();
     }
 }
