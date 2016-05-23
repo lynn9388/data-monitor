@@ -21,25 +21,59 @@ package com.lynn9388.datamonitor.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
 
 public class NetworkUtil {
-    public static boolean isMobileConnected(Context context) {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mobileInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return mobileInfo.isConnected();
-    }
-
-    public static boolean isWifiConnected(Context context) {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiInfo =
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return wifiInfo.isConnected();
-    }
-
     public static boolean isNetworkConnected(Context context) {
-        return isMobileConnected(context) || isWifiConnected(context);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public static MobileNetworkType getMobileNetworkType(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = telephonyManager.getNetworkType();
+        switch (networkType) {
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return MobileNetworkType.NETWORK_TYPE_2G;
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return MobileNetworkType.NETWORK_TYPE_3G;
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return MobileNetworkType.NETWORK_TYPE_4G;
+            default:
+                return MobileNetworkType.NETWORK_TYPE_UNKNOWN;
+        }
+    }
+
+    public enum MobileNetworkType {
+        NETWORK_TYPE_2G("2G"),
+        NETWORK_TYPE_3G("3G"),
+        NETWORK_TYPE_4G("4G"),
+        NETWORK_TYPE_UNKNOWN("Unknown");
+
+        private String value;
+
+        MobileNetworkType(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 }
