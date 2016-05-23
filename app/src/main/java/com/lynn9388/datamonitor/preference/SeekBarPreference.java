@@ -45,6 +45,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     private String mTitle;
     private String mSummary;
 
+    private TextView mTitleView;
+    private TextView mSummaryView;
     private SeekBar mSeekBarView;
 
     public SeekBarPreference(Context context) {
@@ -96,12 +98,12 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     public void onBindView(View view) {
         super.onBindView(view);
 
-        TextView titleView = (TextView) view.findViewById(android.R.id.title);
-        TextView summaryView = (TextView) view.findViewById(android.R.id.summary);
+        mTitleView = (TextView) view.findViewById(android.R.id.title);
+        mSummaryView = (TextView) view.findViewById(android.R.id.summary);
         mSeekBarView = (SeekBar) view.findViewById(R.id.seek_bar);
 
-        titleView.setText(mTitle);
-        summaryView.setText(mSummary);
+        mTitleView.setText(mTitle);
+        mSummaryView.setText(mSummary);
         setMaxValue(mMaxValue);
         mSeekBarView.setOnSeekBarChangeListener(this);
     }
@@ -204,6 +206,9 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     }
 
     public void setTitle(String title) {
+        if (mTitleView != null) {
+            mTitleView.setText(title);
+        }
         mTitle = title;
     }
 
@@ -212,6 +217,9 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     }
 
     public void setSummary(String summary) {
+        if (mSummaryView != null) {
+            mSummaryView.setText(summary);
+        }
         mSummary = summary;
     }
 }
