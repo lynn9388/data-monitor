@@ -13,7 +13,7 @@ import de.greenrobot.dao.internal.DaoConfig;
 /**
  * DAO for table "APP".
  */
-public class AppDao extends AbstractDao<App, Integer> {
+public class AppDao extends AbstractDao<App, Long> {
 
     public static final String TABLENAME = "APP";
     private DaoSession daoSession;
@@ -33,28 +33,24 @@ public class AppDao extends AbstractDao<App, Integer> {
      * Creates the underlying database table.
      */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"APP\" (" + //
                 "\"UID\" INTEGER PRIMARY KEY ," + // 0: uid
                 "\"PACKAGE_NAME\" TEXT NOT NULL );"); // 1: packageName
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+    /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"APP\"";
         db.execSQL(sql);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, App entity) {
         stmt.clearBindings();
 
-        Integer uid = entity.getUid();
+        Long uid = entity.getUid();
         if (uid != null) {
             stmt.bindLong(1, uid);
         }
@@ -67,48 +63,39 @@ public class AppDao extends AbstractDao<App, Integer> {
         entity.__setDaoSession(daoSession);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
-    public Integer readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public App readEntity(Cursor cursor, int offset) {
         App entity = new App( //
-                cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0), // uid
+                cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // uid
                 cursor.getString(offset + 1) // packageName
         );
         return entity;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, App entity, int offset) {
-        entity.setUid(cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0));
+        entity.setUid(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setPackageName(cursor.getString(offset + 1));
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
-    protected Integer updateKeyAfterInsert(App entity, long rowId) {
-        return entity.getUid();
+    protected Long updateKeyAfterInsert(App entity, long rowId) {
+        entity.setUid(rowId);
+        return rowId;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
-    public Integer getKey(App entity) {
+    public Long getKey(App entity) {
         if (entity != null) {
             return entity.getUid();
         } else {
@@ -116,21 +103,19 @@ public class AppDao extends AbstractDao<App, Integer> {
         }
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected boolean isEntityUpdateable() {
         return true;
     }
 
-    /**
+/**
      * Properties of entity App.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-     */
+    */
     public static class Properties {
-        public final static Property Uid = new Property(0, Integer.class, "uid", true, "UID");
+    public final static Property Uid = new Property(0, Long.class, "uid", true, "UID");
         public final static Property PackageName = new Property(1, String.class, "packageName", false, "PACKAGE_NAME");
     }
-
+    
 }

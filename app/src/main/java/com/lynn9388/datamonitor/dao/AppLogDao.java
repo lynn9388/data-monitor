@@ -40,7 +40,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
      * Creates the underlying database table.
      */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"APP_LOG\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"TIME\" INTEGER NOT NULL ," + // 1: time
@@ -50,21 +50,17 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
                 "\"NETWORK_TYPE\" TEXT NOT NULL );"); // 5: networkType
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+    /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"APP_LOG\"";
         db.execSQL(sql);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, AppLog entity) {
         stmt.clearBindings();
-
+ 
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
@@ -82,23 +78,19 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         entity.__setDaoSession(daoSession);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public AppLog readEntity(Cursor cursor, int offset) {
         AppLog entity = new AppLog( //
                 cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
                 new java.util.Date(cursor.getLong(offset + 1)), // time
-                cursor.getInt(offset + 2), // uid
+                cursor.getLong(offset + 2), // uid
                 cursor.getLong(offset + 3), // sendBytes
                 cursor.getLong(offset + 4), // receiveBytes
                 cursor.getString(offset + 5) // networkType
@@ -106,31 +98,25 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         return entity;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, AppLog entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTime(new java.util.Date(cursor.getLong(offset + 1)));
-        entity.setUid(cursor.getInt(offset + 2));
+        entity.setUid(cursor.getLong(offset + 2));
         entity.setSendBytes(cursor.getLong(offset + 3));
         entity.setReceiveBytes(cursor.getLong(offset + 4));
         entity.setNetworkType(cursor.getString(offset + 5));
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(AppLog entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public Long getKey(AppLog entity) {
         if (entity != null) {
@@ -143,7 +129,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
     /**
      * @inheritdoc
      */
-    @Override
+    @Override    
     protected boolean isEntityUpdateable() {
         return true;
     }
@@ -151,7 +137,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
     /**
      * Internal query to resolve the "logs" to-many relationship of App.
      */
-    public List<AppLog> _queryApp_Logs(int uid) {
+    public List<AppLog> _queryApp_Logs(long uid) {
         synchronized (this) {
             if (app_LogsQuery == null) {
                 QueryBuilder<AppLog> queryBuilder = queryBuilder();
@@ -183,13 +169,13 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         int offset = getAllColumns().length;
 
         App app = loadCurrentOther(daoSession.getAppDao(), cursor, offset);
-        if (app != null) {
+         if(app != null) {
             entity.setApp(app);
-        }
+         }
 
         return entity;
     }
-
+    
     public AppLog loadDeep(Long key) {
         assertSinglePk();
         if (key == null) {
@@ -201,7 +187,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
         String sql = builder.toString();
 
-        String[] keyArray = new String[]{key.toString()};
+        String[] keyArray = new String[] { key.toString() };
         Cursor cursor = db.rawQuery(sql, keyArray);
 
         try {
@@ -217,9 +203,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         }
     }
 
-    /**
-     * Reads all available rows from the given cursor and returns a list of new ImageTO objects.
-     */
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
     public List<AppLog> loadAllDeepFromCursor(Cursor cursor) {
         int count = cursor.getCount();
         List<AppLog> list = new ArrayList<AppLog>(count);
@@ -241,7 +225,7 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         }
         return list;
     }
-
+    
     protected List<AppLog> loadDeepAllAndCloseCursor(Cursor cursor) {
         try {
             return loadAllDeepFromCursor(cursor);
@@ -250,25 +234,23 @@ public class AppLogDao extends AbstractDao<AppLog, Long> {
         }
     }
 
-    /**
-     * A raw-style query where you can pass any WHERE clause and arguments.
-     */
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
     public List<AppLog> queryDeep(String where, String... selectionArg) {
         Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
         return loadDeepAllAndCloseCursor(cursor);
     }
-
-    /**
+    
+/**
      * Properties of entity AppLog.<br/>
      * Can be used for QueryBuilder and for referencing column names.
-     */
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Time = new Property(1, java.util.Date.class, "time", false, "TIME");
-        public final static Property Uid = new Property(2, int.class, "uid", false, "UID");
+    public final static Property Uid = new Property(2, long.class, "uid", false, "UID");
         public final static Property SendBytes = new Property(3, long.class, "sendBytes", false, "SEND_BYTES");
         public final static Property ReceiveBytes = new Property(4, long.class, "receiveBytes", false, "RECEIVE_BYTES");
         public final static Property NetworkType = new Property(5, String.class, "networkType", false, "NETWORK_TYPE");
     }
-
+ 
 }

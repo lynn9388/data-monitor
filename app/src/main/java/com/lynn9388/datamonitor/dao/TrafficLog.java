@@ -65,16 +65,12 @@ public class TrafficLog {
         this.receiveBytes = receiveBytes;
     }
 
-    /**
-     * Not-null value.
-     */
+    /** Not-null value. */
     public String getNetworkType() {
         return networkType;
     }
 
-    /**
-     * Not-null value; ensure this value is available before it is saved to the database.
-     */
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setNetworkType(String networkType) {
         this.networkType = networkType;
     }

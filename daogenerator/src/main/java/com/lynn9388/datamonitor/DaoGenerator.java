@@ -42,13 +42,13 @@ public class DaoGenerator {
         trafficLog.addStringProperty("networkType").notNull();
 
         Entity app = schema.addEntity("App");
-        app.addIntProperty("uid").primaryKey();
+        app.addLongProperty("uid").primaryKey();
         app.addStringProperty("packageName").notNull();
 
         Entity appLog = schema.addEntity("AppLog");
         appLog.addIdProperty();
         appLog.addDateProperty("time").notNull().getProperty();
-        Property uidProperty = appLog.addIntProperty("uid").notNull().getProperty();
+        Property uidProperty = appLog.addLongProperty("uid").notNull().getProperty();
         appLog.addToOne(app, uidProperty);
         appLog.addLongProperty("sendBytes").notNull();
         appLog.addLongProperty("receiveBytes").notNull();
