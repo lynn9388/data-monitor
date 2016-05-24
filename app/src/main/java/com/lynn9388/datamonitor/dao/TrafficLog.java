@@ -11,9 +11,7 @@ public class TrafficLog {
     private java.util.Date time;
     private long sendBytes;
     private long receiveBytes;
-    /**
-     * Not-null value.
-     */
+    /** Not-null value. */
     private String networkType;
 
     public TrafficLog() {

@@ -42,19 +42,19 @@ public class DaoGenerator {
         trafficLog.addStringProperty("networkType").notNull();
 
         Entity app = schema.addEntity("App");
-        app.addLongProperty("uid").primaryKey();
+        app.addIdProperty();
         app.addStringProperty("packageName").notNull();
 
         Entity appLog = schema.addEntity("AppLog");
         appLog.addIdProperty();
         appLog.addDateProperty("time").notNull().getProperty();
-        Property uidProperty = appLog.addLongProperty("uid").notNull().getProperty();
-        appLog.addToOne(app, uidProperty);
+        Property appId = appLog.addLongProperty("appId").notNull().getProperty();
+        appLog.addToOne(app, appId);
         appLog.addLongProperty("sendBytes").notNull();
         appLog.addLongProperty("receiveBytes").notNull();
         appLog.addStringProperty("networkType").notNull();
 
-        ToMany appToLogs = app.addToMany(appLog, uidProperty);
+        ToMany appToLogs = app.addToMany(appLog, appId);
         appToLogs.setName("logs");
     }
 }
