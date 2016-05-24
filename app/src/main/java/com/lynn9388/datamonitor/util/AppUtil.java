@@ -51,6 +51,12 @@ public class AppUtil {
         return packageNames;
     }
 
+    public static int getUid(Context context, String packageName)
+            throws PackageManager.NameNotFoundException {
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).uid;
+    }
+
     public static void insertApp(Context context, String packageName) {
         DaoSession daoSession = DatabaseUtil.getDaoSession(context);
         daoSession.insert(new App(null, packageName));
