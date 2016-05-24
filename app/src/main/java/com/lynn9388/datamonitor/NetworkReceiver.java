@@ -26,6 +26,7 @@ import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.lynn9388.datamonitor.util.AppUtil;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {
@@ -40,25 +41,25 @@ public class NetworkReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, false);
         } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-            boolean netwrokConnected = preferences.getBoolean(PREF_KEY_NETWORK_CONNECTED, false);
+            boolean networkConnected = preferences.getBoolean(PREF_KEY_NETWORK_CONNECTED, false);
 
-            if (!netwrokConnected && NetworkUtil.isNetworkConnected(context)) {
+            if (!networkConnected && NetworkUtil.isNetworkConnected(context)) {
                 Log.d(TAG, "Network state changed: disconnected -> connected");
                 editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, true);
                 context.startService(new Intent(context, NetworkService.class));
-            } else if (netwrokConnected && !NetworkUtil.isNetworkConnected(context)) {
+            } else if (networkConnected && !NetworkUtil.isNetworkConnected(context)) {
                 Log.d(TAG, "Network state changed: connected -> disconnected");
                 editor.putBoolean(PREF_KEY_NETWORK_CONNECTED, false);
                 context.stopService(new Intent(context, NetworkService.class));
             }
         } else if (Intent.ACTION_PACKAGE_ADDED.equals(intent.getAction())) {
-            int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
             String packageName = intent.getData().getEncodedSchemeSpecificPart();
-            Log.d(TAG, "Package added: " + uid + " " + packageName);
+            AppUtil.insertApp(context, packageName);
+            Log.d(TAG, "Package added: " + packageName);
         } else if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
-            int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
             String packageName = intent.getData().getEncodedSchemeSpecificPart();
-            Log.d(TAG, "Package removed: " + uid + " " + packageName);
+            AppUtil.deleteAppAndLogs(context, packageName);
+            Log.d(TAG, "Package removed: " + packageName);
         }
 
         editor.apply();
