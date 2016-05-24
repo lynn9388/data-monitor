@@ -75,9 +75,19 @@ public class AppUtil {
     public static void updateApps(Context context) {
         DaoSession daoSession = DatabaseUtil.getDaoSession(context);
         AppDao appDao = daoSession.getAppDao();
-        appDao.deleteAll();
 
+        List<App> apps = appDao.queryBuilder().list();
         List<String> packageNames = getPackageNamesWithInternetPermission(context);
+
+        for (App app : apps) {
+            String packageName = app.getPackageName();
+            if (packageNames.contains(packageName)) {
+                packageNames.remove(packageNames.indexOf(packageName));
+            } else {
+                deleteAppAndLogs(context, packageName);
+            }
+        }
+
         for (String packageName : packageNames) {
             daoSession.insert(new App(null, packageName));
         }
