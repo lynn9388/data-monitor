@@ -43,7 +43,7 @@ public class DaoGenerator {
 
         Entity app = schema.addEntity("App");
         app.addIdProperty();
-        app.addStringProperty("packageName").notNull();
+        app.addStringProperty("packageName").notNull().unique();
 
         Entity appLog = schema.addEntity("AppLog");
         appLog.addIdProperty();
