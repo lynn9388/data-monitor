@@ -59,11 +59,16 @@ public class MobileDataFragment extends Fragment {
             "pref_key_panel2", "pref_key_panel3"};
     private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
 
-    private static String[] sNetworkUsagePrefKeys = {
-            "pref_key_2g",
-            "pref_key_3g",
-            "pref_key_4g",
-            "pref_key_left"
+    private static String[] getsNetworkUsageTodayPrefKeys = {
+            "pref_key_2g_today",
+            "pref_key_3g_today",
+            "pref_key_4g_today"
+    };
+    private static String[] sNetworkUsageThisMonthPrefKeys = {
+            "pref_key_2g_this_month",
+            "pref_key_3g_this_month",
+            "pref_key_4g_this_month",
+            "pref_key_left_this_month"
     };
     private static NetworkUtil.NetworkType[] sNetworkTypes = {
             NetworkUtil.NetworkType.NETWORK_TYPE_2G,
@@ -158,8 +163,8 @@ public class MobileDataFragment extends Fragment {
 
         int index = 0;
         int[] colors = new int[4];
-        for (int i = 0; i < sNetworkUsagePrefKeys.length; i++) {
-            long dataUsage = mSharedPreferences.getLong(sNetworkUsagePrefKeys[i], 0L);
+        for (int i = 0; i < sNetworkUsageThisMonthPrefKeys.length; i++) {
+            long dataUsage = mSharedPreferences.getLong(sNetworkUsageThisMonthPrefKeys[i], 0L);
             colors[i] = mColors[i];
             if (dataUsage != 0) {
                 entries1.add(new Entry(dataUsage, index));
@@ -204,11 +209,12 @@ public class MobileDataFragment extends Fragment {
             for (int i = 0; i < sNetworkTypes.length - 1; i++) {
                 long dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
                         TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
+                editor.putLong(getsNetworkUsageTodayPrefKeys[i], dataUsage);
                 usedToday += dataUsage;
 
                 dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
                         TrafficUtil.getStartOfMonth(now), TrafficUtil.getEndOfMonth(now));
-                editor.putLong(sNetworkUsagePrefKeys[i], dataUsage);
+                editor.putLong(sNetworkUsageThisMonthPrefKeys[i], dataUsage);
                 usedThisMonth += dataUsage;
             }
 
@@ -221,7 +227,7 @@ public class MobileDataFragment extends Fragment {
             editor.putString(sPanelValuePrefKeys[1], TrafficUtil.getReadableValue(usedThisMonth));
 
             long leftThisMonth = dataPlan - usedThisMonth;
-            editor.putLong(sNetworkUsagePrefKeys[3], leftThisMonth);
+            editor.putLong(sNetworkUsageThisMonthPrefKeys[3], leftThisMonth);
             editor.putString(sPanelValuePrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
 
             Calendar calendar = Calendar.getInstance();
