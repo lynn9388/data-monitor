@@ -43,6 +43,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.dao.TrafficLog;
+import com.lynn9388.datamonitor.util.NetworkUtil;
 import com.lynn9388.datamonitor.util.TrafficUtil;
 
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class DetailFragment extends Fragment {
             xVals.add(getString(stringId));
         }
 
-        for (int i = 0; i < sDataTypes.length; i++) {
+        for (int i = 0; i < sDataUsedPrefKeys.length; i++) {
             entries1.add(new Entry(mSharedPreferences.getLong(sDataUsedPrefKeys[i], 0L), i));
         }
 
@@ -179,11 +180,15 @@ public class DetailFragment extends Fragment {
             long mobileUp = 0;
             long wifiDown = 0;
             long wifiUp = 0;
+            String wifi = NetworkUtil.NetworkType.NETWORK_TYPE_WIFI.toString();
             for (TrafficLog log : trafficLogs) {
-                mobileDown += log.getMobileRxBytes();
-                mobileUp += log.getMobileTxBytes();
-                wifiDown += log.getWifiRxBytes();
-                wifiUp += log.getWifiTxBytes();
+                if (log.getNetworkType().equals(wifi)) {
+                    wifiDown += log.getReceiveBytes();
+                    wifiUp += log.getSendBytes();
+                } else {
+                    mobileDown += log.getReceiveBytes();
+                    mobileUp += log.getSendBytes();
+                }
             }
 
             SharedPreferences.Editor editor = mSharedPreferences.edit();
