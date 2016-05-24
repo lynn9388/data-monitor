@@ -9,12 +9,12 @@ public class TrafficLog {
     private Long id;
     /** Not-null value. */
     private java.util.Date time;
-    private long mobileRxBytes;
-    private long mobileTxBytes;
-    private long wifiRxBytes;
-    private long wifiTxBytes;
-    private long totalRxBytes;
-    private long totalTxBytes;
+    private long sendBytes;
+    private long receiveBytes;
+    /**
+     * Not-null value.
+     */
+    private String networkType;
 
     public TrafficLog() {
     }
@@ -23,15 +23,12 @@ public class TrafficLog {
         this.id = id;
     }
 
-    public TrafficLog(Long id, java.util.Date time, long mobileRxBytes, long mobileTxBytes, long wifiRxBytes, long wifiTxBytes, long totalRxBytes, long totalTxBytes) {
+    public TrafficLog(Long id, java.util.Date time, long sendBytes, long receiveBytes, String networkType) {
         this.id = id;
         this.time = time;
-        this.mobileRxBytes = mobileRxBytes;
-        this.mobileTxBytes = mobileTxBytes;
-        this.wifiRxBytes = wifiRxBytes;
-        this.wifiTxBytes = wifiTxBytes;
-        this.totalRxBytes = totalRxBytes;
-        this.totalTxBytes = totalTxBytes;
+        this.sendBytes = sendBytes;
+        this.receiveBytes = receiveBytes;
+        this.networkType = networkType;
     }
 
     public Long getId() {
@@ -52,52 +49,34 @@ public class TrafficLog {
         this.time = time;
     }
 
-    public long getMobileRxBytes() {
-        return mobileRxBytes;
+    public long getSendBytes() {
+        return sendBytes;
     }
 
-    public void setMobileRxBytes(long mobileRxBytes) {
-        this.mobileRxBytes = mobileRxBytes;
+    public void setSendBytes(long sendBytes) {
+        this.sendBytes = sendBytes;
     }
 
-    public long getMobileTxBytes() {
-        return mobileTxBytes;
+    public long getReceiveBytes() {
+        return receiveBytes;
     }
 
-    public void setMobileTxBytes(long mobileTxBytes) {
-        this.mobileTxBytes = mobileTxBytes;
+    public void setReceiveBytes(long receiveBytes) {
+        this.receiveBytes = receiveBytes;
     }
 
-    public long getWifiRxBytes() {
-        return wifiRxBytes;
+    /**
+     * Not-null value.
+     */
+    public String getNetworkType() {
+        return networkType;
     }
 
-    public void setWifiRxBytes(long wifiRxBytes) {
-        this.wifiRxBytes = wifiRxBytes;
-    }
-
-    public long getWifiTxBytes() {
-        return wifiTxBytes;
-    }
-
-    public void setWifiTxBytes(long wifiTxBytes) {
-        this.wifiTxBytes = wifiTxBytes;
-    }
-
-    public long getTotalRxBytes() {
-        return totalRxBytes;
-    }
-
-    public void setTotalRxBytes(long totalRxBytes) {
-        this.totalRxBytes = totalRxBytes;
-    }
-
-    public long getTotalTxBytes() {
-        return totalTxBytes;
-    }
-
-    public void setTotalTxBytes(long totalTxBytes) {
-        this.totalTxBytes = totalTxBytes;
+    /**
+     * Not-null value; ensure this value is available before it is saved to the database.
+     */
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
     }
 
 }

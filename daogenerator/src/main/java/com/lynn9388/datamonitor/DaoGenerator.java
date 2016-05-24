@@ -19,7 +19,9 @@
 package com.lynn9388.datamonitor;
 
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
+import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Generates entities and DAOs for app.
@@ -27,25 +29,32 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGenerator {
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(1, "com.lynn9388.datamonitor.dao");
-        addTrafficLogEntity(schema);
+        addEntities(schema);
         new de.greenrobot.daogenerator.DaoGenerator().generateAll(schema, "../app/src/main/java");
     }
 
-    private static void addTrafficLogEntity(Schema schema) {
+    private static void addEntities(Schema schema) {
         Entity trafficLog = schema.addEntity("TrafficLog");
         trafficLog.addIdProperty();
         trafficLog.addDateProperty("time").notNull();
-        // Number of bytes received across mobile networks in the past 10 seconds.
-        trafficLog.addLongProperty("mobileRxBytes").notNull();
-        // Number of bytes transmitted across mobile networks in the past 10 seconds.
-        trafficLog.addLongProperty("mobileTxBytes").notNull();
-        // Number of bytes received across mobile networks in the past 10 seconds.
-        trafficLog.addLongProperty("wifiRxBytes").notNull();
-        // Number of bytes transmitted across mobile networks in the past 10 seconds.
-        trafficLog.addLongProperty("wifiTxBytes").notNull();
-        // Number of bytes received since device boot.
-        trafficLog.addLongProperty("totalRxBytes").notNull();
-        // Number of bytes transmitted since device boot.
-        trafficLog.addLongProperty("totalTxBytes").notNull();
+        trafficLog.addLongProperty("sendBytes").notNull();
+        trafficLog.addLongProperty("receiveBytes").notNull();
+        trafficLog.addStringProperty("networkType").notNull();
+
+        Entity app = schema.addEntity("App");
+        app.addIntProperty("uid").primaryKey();
+        app.addStringProperty("packageName").notNull();
+
+        Entity appLog = schema.addEntity("AppLog");
+        appLog.addIdProperty();
+        appLog.addDateProperty("time").notNull().getProperty();
+        Property uidProperty = appLog.addIntProperty("uid").notNull().getProperty();
+        appLog.addToOne(app, uidProperty);
+        appLog.addLongProperty("sendBytes").notNull();
+        appLog.addLongProperty("receiveBytes").notNull();
+        appLog.addStringProperty("networkType").notNull();
+
+        ToMany appToLogs = app.addToMany(appLog, uidProperty);
+        appToLogs.setName("logs");
     }
 }

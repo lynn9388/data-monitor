@@ -16,14 +16,33 @@ import de.greenrobot.dao.identityscope.IdentityScopeType;
 public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = 1;
 
+    public DaoMaster(SQLiteDatabase db) {
+        super(db, SCHEMA_VERSION);
+        registerDaoClass(TrafficLogDao.class);
+        registerDaoClass(AppDao.class);
+        registerDaoClass(AppLogDao.class);
+    }
+    
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
         TrafficLogDao.createTable(db, ifNotExists);
+        AppDao.createTable(db, ifNotExists);
+        AppLogDao.createTable(db, ifNotExists);
     }
     
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
         TrafficLogDao.dropTable(db, ifExists);
+        AppDao.dropTable(db, ifExists);
+        AppLogDao.dropTable(db, ifExists);
+    }
+
+    public DaoSession newSession() {
+        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
+    }
+
+    public DaoSession newSession(IdentityScopeType type) {
+        return new DaoSession(db, type, daoConfigMap);
     }
     
     public static abstract class OpenHelper extends SQLiteOpenHelper {
@@ -51,19 +70,6 @@ public class DaoMaster extends AbstractDaoMaster {
             dropAllTables(db, true);
             onCreate(db);
         }
-    }
-
-    public DaoMaster(SQLiteDatabase db) {
-        super(db, SCHEMA_VERSION);
-        registerDaoClass(TrafficLogDao.class);
-    }
-    
-    public DaoSession newSession() {
-        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
-    }
-    
-    public DaoSession newSession(IdentityScopeType type) {
-        return new DaoSession(db, type, daoConfigMap);
     }
     
 }
