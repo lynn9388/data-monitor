@@ -19,11 +19,7 @@
 package com.lynn9388.datamonitor.util;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
-import com.lynn9388.datamonitor.MainActivity;
-import com.lynn9388.datamonitor.dao.DaoMaster;
-import com.lynn9388.datamonitor.dao.DaoSession;
 import com.lynn9388.datamonitor.dao.TrafficLog;
 import com.lynn9388.datamonitor.dao.TrafficLogDao;
 
@@ -35,15 +31,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class TrafficUtil {
-    private static TrafficLogDao getTrafficLogDao(Context context) {
-        DaoMaster.DevOpenHelper helper =
-                new DaoMaster.DevOpenHelper(context, MainActivity.DATABASE_NAME, null);
-        SQLiteDatabase database = helper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(database);
-        DaoSession daoSession = daoMaster.newSession();
-        return daoSession.getTrafficLogDao();
-    }
-
     public static Date getStartOfDay(Date date) {
         return DateUtils.truncate(date, Calendar.DATE);
     }
@@ -81,21 +68,24 @@ public class TrafficUtil {
         return String.format(Locale.getDefault(), "%.2f %s", value, unit);
     }
 
-    public static long getTotalMobileDataBytes(Context context, Date start, Date end) {
-        TrafficLogDao trafficLogDao = getTrafficLogDao(context);
+    public static long getTotalDataUsage(Context context, NetworkUtil.NetworkType networkType,
+                                         Date start, Date end) {
+        TrafficLogDao trafficLogDao = DatabaseUtil.getDaoSession(context).getTrafficLogDao();
         List<TrafficLog> logs = trafficLogDao.queryBuilder()
-                .where(TrafficLogDao.Properties.Time.between(start, end))
+                .where(TrafficLogDao.Properties.NetworkType.eq(networkType.toString()),
+                        TrafficLogDao.Properties.Time.between(start, end))
                 .list();
 
         long bytes = 0;
         for (TrafficLog log : logs) {
-            bytes += log.getMobileRxBytes() + log.getMobileTxBytes();
+            bytes += log.getSendBytes() + log.getReceiveBytes();
         }
+
         return bytes;
     }
 
     public static List<TrafficLog> getTrafficLogs(Context context, Date start, Date end) {
-        TrafficLogDao trafficLogDao = getTrafficLogDao(context);
+        TrafficLogDao trafficLogDao = DatabaseUtil.getDaoSession(context).getTrafficLogDao();
         return trafficLogDao.queryBuilder()
                 .where(TrafficLogDao.Properties.Time.between(start, end))
                 .list();
