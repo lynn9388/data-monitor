@@ -22,6 +22,15 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#4CAF50</color>
 
+    <color name="color2GSend">#8BC34A</color>
+    <color name="color2GReceive">#33691E</color>
+    <color name="color3GSend">#009688</color>
+    <color name="color3GReceive">#004D40</color>
+    <color name="color4GSend">#03A9F4</color>
+    <color name="color4GReceive">#01579B</color>
+    <color name="colorWifiSend">#3F51B5</color>
+    <color name="colorWifiReceive">#1A237E</color>
+
     <color name="colorMobileDown">#D9508A</color>
     <color name="colorMobileUp">#FE9507</color>
     <color name="colorWifiDown">#6AA786</color>

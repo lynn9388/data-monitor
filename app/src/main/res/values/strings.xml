@@ -39,6 +39,9 @@
     <string name="complete_title">You are all set. Enjoy Data Monitor.</string>
     <string name="complete_message">GET STARTED</string>
 
+    <string name="chart_mobile_data_message">Used this month</string>
+    <string name="chart_mobile_data_left">Left</string>
+
     <string name="used_today">Used today</string>
     <string name="used_this_month">Used this month</string>
     <string name="remaining_this_month">Remaining this month</string>
