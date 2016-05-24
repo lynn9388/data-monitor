@@ -23,12 +23,13 @@
     android:orientation="vertical"
     tools:context=".fragment.MobileDataFragment">
 
-    <com.philjay.circledisplay.CircleDisplay
-        android:id="@+id/data_usage_view"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pie_chart"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="24dp"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="24dp"
+        android:layout_weight="2" />
 
     <LinearLayout
         android:layout_width="match_parent"
