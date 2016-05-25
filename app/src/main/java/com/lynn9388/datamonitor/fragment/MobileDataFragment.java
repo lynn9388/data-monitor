@@ -21,8 +21,9 @@ package com.lynn9388.datamonitor.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -51,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,7 +89,8 @@ public class MobileDataFragment extends Fragment {
     private View[] mPanels;
 
     private SharedPreferences mSharedPreferences;
-    private UpdateDataTask mUpdateDataTask;
+    private Handler mHandler;
+    private TimerTask mTimerTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,14 +138,82 @@ public class MobileDataFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mUpdateDataTask = new UpdateDataTask();
-        mUpdateDataTask.execute();
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 0) {
+                    updateViews();
+                }
+            }
+        };
+
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                updateData();
+                mHandler.sendEmptyMessage(0);
+            }
+        };
+        new Timer().scheduleAtFixedRate(mTimerTask, 0, 5000);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUpdateDataTask.cancel(true);
+        mTimerTask.cancel();
+        mHandler.removeMessages(0);
+    }
+
+    private void updateData() {
+        // Get settings of data plan and used data error
+        String dataPlanSetting =
+                mSharedPreferences.getString(SettingsFragment.PREF_KEY_DATA_PLAN, "0");
+        String usedDataErrorSetting =
+                mSharedPreferences.getString(SettingsFragment.PREF_KEY_USED_DATA_ERROR, "0");
+        long dataPlan = Long.valueOf(dataPlanSetting) * 1024 * 1024;
+        long usedDataError = (long) (Float.valueOf(usedDataErrorSetting) * 1024 * 1024);
+
+        Date now = new Date();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        long usedToday = 0;
+        long usedThisMonth = 0;
+        for (int i = 0; i < sNetworkTypes.length - 1; i++) {
+            long dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
+                    TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
+            editor.putLong(sNetworkUsageTodayPrefKeys[i], dataUsage);
+            usedToday += dataUsage;
+
+            dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
+                    TrafficUtil.getStartOfMonth(now), TrafficUtil.getEndOfMonth(now));
+            editor.putLong(sNetworkUsageThisMonthPrefKeys[i], dataUsage);
+            usedThisMonth += dataUsage;
+        }
+
+        editor.putString(sPanelValuePrefKeys[0], TrafficUtil.getReadableValue(usedToday));
+        editor.putString(SettingsFragment.PREF_KEY_USED_DATA_IN_LOG,
+                String.valueOf(usedThisMonth / (1024.0 * 1024.0)));
+        usedThisMonth += usedDataError;
+        editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
+                String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
+        editor.putString(sPanelValuePrefKeys[1], TrafficUtil.getReadableValue(usedThisMonth));
+
+        long leftThisMonth = dataPlan - usedThisMonth;
+        editor.putLong(sNetworkUsageThisMonthPrefKeys[3], leftThisMonth);
+        editor.putString(sPanelValuePrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
+
+        Calendar calendar = Calendar.getInstance();
+        int daysLeft = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                - calendar.get(Calendar.DAY_OF_MONTH);
+        editor.putString(sPanelValuePrefKeys[3],
+                String.valueOf(daysLeft) + (daysLeft > 1 ? " Days" : " Day"));
+
+        float usagePercentage = 100f * usedThisMonth / dataPlan;
+        editor.putFloat(sUsagePercentagePrefKey, usagePercentage);
+
+        editor.apply();
     }
 
     private void updateViews() {
@@ -243,67 +315,5 @@ public class MobileDataFragment extends Fragment {
                     }
                 })
                 .show();
-    }
-
-    private class UpdateDataTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            // Get settings of data plan and used data error
-            String dataPlanSetting =
-                    mSharedPreferences.getString(SettingsFragment.PREF_KEY_DATA_PLAN, "0");
-            String usedDataErrorSetting =
-                    mSharedPreferences.getString(SettingsFragment.PREF_KEY_USED_DATA_ERROR, "0");
-            long dataPlan = Long.valueOf(dataPlanSetting) * 1024 * 1024;
-            long usedDataError = (long) (Float.valueOf(usedDataErrorSetting) * 1024 * 1024);
-
-            Date now = new Date();
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-
-            long usedToday = 0;
-            long usedThisMonth = 0;
-            for (int i = 0; i < sNetworkTypes.length - 1; i++) {
-                long dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
-                        TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
-                editor.putLong(sNetworkUsageTodayPrefKeys[i], dataUsage);
-                usedToday += dataUsage;
-
-                dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
-                        TrafficUtil.getStartOfMonth(now), TrafficUtil.getEndOfMonth(now));
-                editor.putLong(sNetworkUsageThisMonthPrefKeys[i], dataUsage);
-                usedThisMonth += dataUsage;
-            }
-
-            editor.putString(sPanelValuePrefKeys[0], TrafficUtil.getReadableValue(usedToday));
-            editor.putString(SettingsFragment.PREF_KEY_USED_DATA_IN_LOG,
-                    String.valueOf(usedThisMonth / (1024.0 * 1024.0)));
-            usedThisMonth += usedDataError;
-            editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
-                    String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
-            editor.putString(sPanelValuePrefKeys[1], TrafficUtil.getReadableValue(usedThisMonth));
-
-            long leftThisMonth = dataPlan - usedThisMonth;
-            editor.putLong(sNetworkUsageThisMonthPrefKeys[3], leftThisMonth);
-            editor.putString(sPanelValuePrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
-
-            Calendar calendar = Calendar.getInstance();
-            int daysLeft = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-                    - calendar.get(Calendar.DAY_OF_MONTH);
-            editor.putString(sPanelValuePrefKeys[3],
-                    String.valueOf(daysLeft) + (daysLeft > 1 ? " Days" : " Day"));
-
-            float usagePercentage = 100f * usedThisMonth / dataPlan;
-            editor.putFloat(sUsagePercentagePrefKey, usagePercentage);
-
-            editor.apply();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (!isCancelled()) {
-                updateViews();
-            }
-        }
     }
 }
