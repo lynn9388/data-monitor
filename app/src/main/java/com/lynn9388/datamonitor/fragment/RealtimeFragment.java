@@ -45,6 +45,9 @@ import com.lynn9388.datamonitor.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,9 +55,13 @@ import java.util.Date;
 public class RealtimeFragment extends Fragment implements OnChartValueSelectedListener {
     public static int[] sDataTypes = {R.string.mobile_down, R.string.mobile_up,
             R.string.wifi_down, R.string.wifi_up};
+    long mLastTotalRxBytes;
+    long mLastTotalTxBytes;
     private LineChart mChart;
     private int[] colors;
-    private Thread thread;
+    private float[] bytes;
+    private Handler mHandler;
+    private TimerTask mTimerTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +69,55 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         View view = inflater.inflate(R.layout.fragment_realtime, container, false);
 
         mChart = (LineChart) view.findViewById(R.id.line_chart);
+        initChart();
+
+        colors = new int[]{
+                ContextCompat.getColor(getContext(), R.color.color0),
+                ContextCompat.getColor(getContext(), R.color.color1),
+                ContextCompat.getColor(getContext(), R.color.color2),
+                ContextCompat.getColor(getContext(), R.color.color3)
+        };
+
+        bytes = new float[4];
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 0) {
+                    addEntry();
+                }
+            }
+        };
+
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                updateData();
+                mHandler.sendEmptyMessage(0);
+            }
+        };
+
+        mLastTotalRxBytes = TrafficStats.getTotalRxBytes();
+        mLastTotalTxBytes = TrafficStats.getTotalTxBytes();
+        new Timer().scheduleAtFixedRate(mTimerTask, 1000, 1000);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mTimerTask.cancel();
+        mHandler.removeMessages(0);
+    }
+
+    private void initChart() {
         mChart.setOnChartValueSelectedListener(this);
         mChart.setNoDataText("");
         mChart.setDescription("");
@@ -93,84 +149,43 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
-
-        colors = new int[]{
-                ContextCompat.getColor(getContext(), R.color.color0),
-                ContextCompat.getColor(getContext(), R.color.color1),
-                ContextCompat.getColor(getContext(), R.color.color2),
-                ContextCompat.getColor(getContext(), R.color.color3)
-        };
-
-        return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void updateData() {
+        long currentMobileRxBytes = TrafficStats.getMobileRxBytes();
+        long currentMobileTxBytes = TrafficStats.getMobileTxBytes();
+        long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
+        long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
+        if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
+            bytes[2] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
+            bytes[3] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+        } else {
+            bytes[0] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
+            bytes[1] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+        }
+        mLastTotalRxBytes = currentTotalRxBytes;
+        mLastTotalTxBytes = currentTotalTxBytes;
+    }
 
-        final float[] bytes = new float[4];
+    private void addEntry() {
+        LineData data = mChart.getData();
+        if (data != null) {
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            data.addXValue(format.format(new Date()));
 
-        final Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.what == 0) {
-
-                    LineData data = mChart.getData();
-                    if (data != null) {
-                        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-                        data.addXValue(format.format(new Date()));
-
-                        for (int i = 0; i < bytes.length; i++) {
-                            ILineDataSet dataSet = data.getDataSetByIndex(i);
-                            if (dataSet == null) {
-                                dataSet = createSet(i);
-                                data.addDataSet(dataSet);
-                            }
-                            data.addEntry(new Entry(bytes[i], dataSet.getEntryCount()), i);
-                        }
-
-                        // let the chart know it's data has changed
-                        mChart.notifyDataSetChanged();
-
-                        // limit the number of visible entries
-                        mChart.setVisibleXRangeMaximum(30);
-                        // mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                        // move to the latest entry
-                        mChart.moveViewToX(data.getXValCount() - 31);
-                    }
+            for (int i = 0; i < bytes.length; i++) {
+                ILineDataSet dataSet = data.getDataSetByIndex(i);
+                if (dataSet == null) {
+                    dataSet = createSet(i);
+                    data.addDataSet(dataSet);
                 }
+                data.addEntry(new Entry(bytes[i], dataSet.getEntryCount()), i);
             }
-        };
 
-        thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    long lastTotalRxBytes = TrafficStats.getTotalRxBytes();
-                    long lastTotalTxBytes = TrafficStats.getTotalTxBytes();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    long currentMobileRxBytes = TrafficStats.getMobileRxBytes();
-                    long currentMobileTxBytes = TrafficStats.getMobileTxBytes();
-                    long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
-                    long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
-                    if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
-                        bytes[2] = (currentTotalRxBytes - lastTotalRxBytes) / 1024f;
-                        bytes[3] = (currentTotalTxBytes - lastTotalTxBytes) / 1024f;
-                    } else {
-                        bytes[0] = (currentTotalRxBytes - lastTotalRxBytes) / 1024f;
-                        bytes[1] = (currentTotalTxBytes - lastTotalTxBytes) / 1024f;
-                    }
-                    handler.sendEmptyMessage(0);
-                }
-            }
-        });
-        thread.start();
+            mChart.notifyDataSetChanged();
+            mChart.setVisibleXRangeMaximum(100);
+            mChart.moveViewToX(data.getXValCount() - 101);
+        }
     }
 
     private LineDataSet createSet(int i) {
