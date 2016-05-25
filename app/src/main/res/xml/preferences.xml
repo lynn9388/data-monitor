@@ -48,7 +48,7 @@
 
         <com.lynn9388.datamonitor.preference.WarningSettingPreference
             android:defaultValue="50"
-            android:key="pref_key_warning_value"
+            android:key="pref_key_warning_percent"
             android:layout="@layout/preference_seek_bar"
             android:title="@string/pref_warning_value_title"
             app:interval="1"

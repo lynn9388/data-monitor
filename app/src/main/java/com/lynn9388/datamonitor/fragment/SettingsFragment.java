@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_USED_DATA_IN_LOG = "pref_key_used_data_in_log";
     public static final String PREF_KEY_USED_DATA_ERROR = "pref_key_used_data_error";
 
-    public static final String PREF_KEY_WARNING_VALUE = "pref_key_warning_value";
+    public static final String PREF_KEY_WARNING_PERCENT = "pref_key_warning_percent";
 
     private static final String PREF_KEY_INTRODUCTION = "pref_key_introduction";
     private static final String PREF_KEY_VERSION = "pref_key_version";
@@ -109,11 +109,11 @@ public class SettingsFragment extends PreferenceFragment
                         PackageManager.DONT_KILL_APP);
                 context.stopService(new Intent(context, NetworkService.class));
             }
-        } else if (PREF_KEY_DATA_PLAN.equals(key) || PREF_KEY_USED_DATA.equals(key)) {
+        } else if (PREF_KEY_DATA_PLAN.equals(key)) {
             String value = sharedPreferences.getString(key, "0");
             findPreference(key).setSummary(value + " MB");
 
-            ((WarningSettingPreference) findPreference(PREF_KEY_WARNING_VALUE)).updateWarningValue();
+            ((WarningSettingPreference) findPreference(PREF_KEY_WARNING_PERCENT)).updateWarningValue();
         } else if (PREF_KEY_USED_DATA.equals(key)) {
             String value = sharedPreferences.getString(key, "0");
             findPreference(key).setSummary(value + " MB");
