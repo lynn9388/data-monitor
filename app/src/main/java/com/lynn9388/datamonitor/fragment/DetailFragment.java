@@ -20,8 +20,9 @@ package com.lynn9388.datamonitor.fragment;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +68,8 @@ public class DetailFragment extends Fragment {
     private View[] mRows = new View[4];
 
     private SharedPreferences mSharedPreferences;
-    private UpdateDataTask mUpdateDataTask;
+    private Handler mHandler;
+    private TimerTask mTimerTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,14 +96,61 @@ public class DetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mUpdateDataTask = new UpdateDataTask();
-        mUpdateDataTask.execute();
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 0) {
+                    updateViews();
+                }
+            }
+        };
+
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                updateData();
+                mHandler.sendEmptyMessage(0);
+            }
+        };
+        new Timer().scheduleAtFixedRate(mTimerTask, 0, 5000);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUpdateDataTask.cancel(true);
+        mTimerTask.cancel();
+        mHandler.removeMessages(0);
+    }
+
+    private void updateData() {
+        Date now = new Date();
+        Date start = TrafficUtil.getStartOfMonth(now);
+        Date end = TrafficUtil.getEndOfMonth(now);
+        List<TrafficLog> trafficLogs = TrafficUtil.getTrafficLogs(getContext(), start, end);
+
+        long mobileDown = 0;
+        long mobileUp = 0;
+        long wifiDown = 0;
+        long wifiUp = 0;
+        String wifi = NetworkUtil.NetworkType.NETWORK_TYPE_WIFI.toString();
+        for (TrafficLog log : trafficLogs) {
+            if (log.getNetworkType().equals(wifi)) {
+                wifiDown += log.getReceiveBytes();
+                wifiUp += log.getSendBytes();
+            } else {
+                mobileDown += log.getReceiveBytes();
+                mobileUp += log.getSendBytes();
+            }
+        }
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putLong(sDataUsedPrefKeys[0], mobileDown);
+        editor.putLong(sDataUsedPrefKeys[1], mobileUp);
+        editor.putLong(sDataUsedPrefKeys[2], wifiDown);
+        editor.putLong(sDataUsedPrefKeys[3], wifiUp);
+        editor.apply();
     }
 
     private void updateViews() {
@@ -166,47 +217,5 @@ public class DetailFragment extends Fragment {
         pieData.setValueFormatter(new PercentFormatter());
 
         return pieData;
-    }
-
-    private class UpdateDataTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            Date now = new Date();
-            Date start = TrafficUtil.getStartOfMonth(now);
-            Date end = TrafficUtil.getEndOfMonth(now);
-            List<TrafficLog> trafficLogs = TrafficUtil.getTrafficLogs(getContext(), start, end);
-
-            long mobileDown = 0;
-            long mobileUp = 0;
-            long wifiDown = 0;
-            long wifiUp = 0;
-            String wifi = NetworkUtil.NetworkType.NETWORK_TYPE_WIFI.toString();
-            for (TrafficLog log : trafficLogs) {
-                if (log.getNetworkType().equals(wifi)) {
-                    wifiDown += log.getReceiveBytes();
-                    wifiUp += log.getSendBytes();
-                } else {
-                    mobileDown += log.getReceiveBytes();
-                    mobileUp += log.getSendBytes();
-                }
-            }
-
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putLong(sDataUsedPrefKeys[0], mobileDown);
-            editor.putLong(sDataUsedPrefKeys[1], mobileUp);
-            editor.putLong(sDataUsedPrefKeys[2], wifiDown);
-            editor.putLong(sDataUsedPrefKeys[3], wifiUp);
-            editor.apply();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (!isCancelled()) {
-                updateViews();
-            }
-        }
     }
 }
