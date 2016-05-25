@@ -18,6 +18,7 @@
 
 package com.lynn9388.datamonitor.fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -33,6 +34,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -59,7 +63,7 @@ public class MobileDataFragment extends Fragment {
             "pref_key_panel2", "pref_key_panel3"};
     private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
 
-    private static String[] getsNetworkUsageTodayPrefKeys = {
+    private static String[] sNetworkUsageTodayPrefKeys = {
             "pref_key_2g_today",
             "pref_key_3g_today",
             "pref_key_4g_today"
@@ -100,6 +104,20 @@ public class MobileDataFragment extends Fragment {
         for (int i = 0; i < sPanelViewIds.length; i++) {
             mPanels[i] = view.findViewById(sPanelViewIds[i]);
         }
+        mPanels[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = getString(R.string.dialog_used_today_title);
+                showDialog(title, sNetworkUsageTodayPrefKeys);
+            }
+        });
+        mPanels[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = getString(R.string.dialog_used_this_month_title);
+                showDialog(title, sNetworkUsageThisMonthPrefKeys);
+            }
+        });
 
         mColors = new int[4];
         mColors[0] = ContextCompat.getColor(getContext(), R.color.color2GSend);
@@ -190,6 +208,43 @@ public class MobileDataFragment extends Fragment {
         return pieData;
     }
 
+    private void showDialog(String title, String[] prefKeys) {
+        Context context = getContext();
+        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(context);
+
+        long[] dataUsages = new long[3];
+        for (int i = 0; i < dataUsages.length; i++) {
+            dataUsages[i] = mSharedPreferences.getLong(prefKeys[i], 0L);
+        }
+
+        adapter.add(new MaterialSimpleListItem.Builder(context)
+                .content(TrafficUtil.getReadableValue(dataUsages[0]))
+                .icon(R.drawable.ic_2g)
+                .iconPaddingDp(8)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(context)
+                .content(TrafficUtil.getReadableValue(dataUsages[1]))
+                .icon(R.drawable.ic_3g)
+                .iconPaddingDp(8)
+                .build());
+        adapter.add(new MaterialSimpleListItem.Builder(context)
+                .content(TrafficUtil.getReadableValue(dataUsages[2]))
+                .icon(R.drawable.ic_4g)
+                .iconPaddingDp(8)
+                .build());
+
+        new MaterialDialog.Builder(context)
+                .title(title)
+                .adapter(adapter, new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View itemView,
+                                            int which, CharSequence text) {
+                        MaterialSimpleListItem item = adapter.getItem(which);
+                    }
+                })
+                .show();
+    }
+
     private class UpdateDataTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -209,7 +264,7 @@ public class MobileDataFragment extends Fragment {
             for (int i = 0; i < sNetworkTypes.length - 1; i++) {
                 long dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
                         TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
-                editor.putLong(getsNetworkUsageTodayPrefKeys[i], dataUsage);
+                editor.putLong(sNetworkUsageTodayPrefKeys[i], dataUsage);
                 usedToday += dataUsage;
 
                 dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],

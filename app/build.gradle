@@ -48,4 +48,6 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     testCompile 'junit:junit:4.12'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') { transitive = true }
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar')
 }
