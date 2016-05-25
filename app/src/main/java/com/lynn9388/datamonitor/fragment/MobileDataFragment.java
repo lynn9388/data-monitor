@@ -184,7 +184,7 @@ public class MobileDataFragment extends Fragment {
         for (int i = 0; i < sNetworkUsageThisMonthPrefKeys.length; i++) {
             long dataUsage = mSharedPreferences.getLong(sNetworkUsageThisMonthPrefKeys[i], 0L);
             colors[i] = mColors[i];
-            if (dataUsage != 0) {
+            if (dataUsage > 0) {
                 entries1.add(new Entry(dataUsage, index));
                 if (i != 3) {
                     xVals.add(sNetworkTypes[i].toString());
