@@ -68,7 +68,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(true);
+        mChart.setDrawGridBackground(false);
         mChart.setPinchZoom(true);
 
         LineData data = new LineData();
@@ -88,7 +88,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
         leftAxis.setAxisMinValue(0f);
-        leftAxis.setGranularityEnabled(true);
+        leftAxis.setAxisMaxValue(2048f);
         leftAxis.setDrawGridLines(true);
 
         YAxis rightAxis = mChart.getAxisRight();
@@ -118,7 +118,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
 
                     LineData data = mChart.getData();
                     if (data != null) {
-                        SimpleDateFormat format = new SimpleDateFormat("mm:ss");
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
                         data.addXValue(format.format(new Date()));
 
                         for (int i = 0; i < bytes.length; i++) {
@@ -160,11 +160,11 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
                     long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
                     long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
                     if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
-                        bytes[2] = (currentTotalRxBytes - lastTotalRxBytes) / (1024f * 1024f);
-                        bytes[3] = (currentTotalTxBytes - lastTotalTxBytes) / (1024f * 1024f);
+                        bytes[2] = (currentTotalRxBytes - lastTotalRxBytes) / 1024f;
+                        bytes[3] = (currentTotalTxBytes - lastTotalTxBytes) / 1024f;
                     } else {
-                        bytes[0] = (currentTotalRxBytes - lastTotalRxBytes) / (1024f * 1024f);
-                        bytes[1] = (currentTotalTxBytes - lastTotalTxBytes) / (1024f * 1024f);
+                        bytes[0] = (currentTotalRxBytes - lastTotalRxBytes) / 1024f;
+                        bytes[1] = (currentTotalTxBytes - lastTotalTxBytes) / 1024f;
                     }
                     handler.sendEmptyMessage(0);
                 }
