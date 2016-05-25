@@ -46,8 +46,8 @@ import java.util.TimerTask;
 import de.greenrobot.dao.query.Query;
 
 public class NetworkService extends Service {
+    public static final int LOG_INTERVAL = 10 * 1000;
     private static final String TAG = NetworkReceiver.class.getSimpleName();
-    private static final int LOG_INTERVAL = 5 * 1000;
 
     private LogTimerTask mLogTimerTask;
 
@@ -68,13 +68,12 @@ public class NetworkService extends Service {
         AppUtil.updateApps(this);
 
         mLogTimerTask = new LogTimerTask(this);
-        new Timer().scheduleAtFixedRate(mLogTimerTask, 0, LOG_INTERVAL);
+        new Timer().scheduleAtFixedRate(mLogTimerTask, LOG_INTERVAL, LOG_INTERVAL);
         return START_STICKY;
     }
 
     private final class LogTimerTask extends TimerTask {
         private Context mContext;
-        private boolean mIsExecutedFirstTime;
 
         private TrafficLogDao mTrafficLogDao;
         private AppLogDao mAppLogDao;
@@ -83,9 +82,11 @@ public class NetworkService extends Service {
         private TrafficLog mTrafficLog;
         private Map<App, AppLog> mAppLogs;
 
+        private long currentTotalTxBytes;
+        private long currentTotalRxBytes;
+
         public LogTimerTask(Context context) {
             mContext = context;
-            mIsExecutedFirstTime = true;
 
             DaoSession daoSession = DatabaseUtil.getDaoSession(context);
             mTrafficLogDao = daoSession.getTrafficLogDao();
@@ -93,40 +94,43 @@ public class NetworkService extends Service {
             mAppQuery = daoSession.getAppDao().queryBuilder().build();
 
             mAppLogs = new HashMap<>();
+
+            currentTotalTxBytes = TrafficStats.getTotalTxBytes();
+            currentTotalRxBytes = TrafficStats.getTotalRxBytes();
+            initLog();
         }
 
         @Override
         public void run() {
-            long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
-            long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
+            currentTotalTxBytes = TrafficStats.getTotalTxBytes();
+            currentTotalRxBytes = TrafficStats.getTotalRxBytes();
 
-            if (mIsExecutedFirstTime) {
-                mIsExecutedFirstTime = false;
-            } else {
-                // Calculate total network usage after interval
-                mTrafficLog.setSendBytes(currentTotalTxBytes - mTrafficLog.getSendBytes());
-                mTrafficLog.setReceiveBytes(currentTotalRxBytes - mTrafficLog.getReceiveBytes());
-                mTrafficLogDao.insert(mTrafficLog);
+            // Calculate total network usage after interval
+            mTrafficLog.setSendBytes(currentTotalTxBytes - mTrafficLog.getSendBytes());
+            mTrafficLog.setReceiveBytes(currentTotalRxBytes - mTrafficLog.getReceiveBytes());
+            mTrafficLogDao.insert(mTrafficLog);
 
-                // Calculate network usage of each app, don't save log if it doesn't use network
-                for (Map.Entry<App, AppLog> entry : mAppLogs.entrySet()) {
-                    try {
-                        int uid = AppUtil.getUid(mContext, entry.getKey().getPackageName());
-                        AppLog log = entry.getValue();
-                        long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
-                        long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
-                        if (sendBytes != 0 || receiveBytes != 0) {
-                            log.setSendBytes(sendBytes);
-                            log.setReceiveBytes(receiveBytes);
-                            mAppLogDao.insert(log);
-                        }
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
+            // Calculate network usage of each app, don't save log if it doesn't use network
+            for (Map.Entry<App, AppLog> entry : mAppLogs.entrySet()) {
+                try {
+                    int uid = AppUtil.getUid(mContext, entry.getKey().getPackageName());
+                    AppLog log = entry.getValue();
+                    long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
+                    long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
+                    if (sendBytes != 0 || receiveBytes != 0) {
+                        log.setSendBytes(sendBytes);
+                        log.setReceiveBytes(receiveBytes);
+                        mAppLogDao.insert(log);
                     }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
 
-            // Prepare for next time
+            initLog();
+        }
+
+        private void initLog() {
             Date now = new Date();
 
             String networkType;
@@ -136,17 +140,14 @@ public class NetworkService extends Service {
                 networkType = NetworkUtil.getMobileNetworkType(mContext).toString();
             }
 
-            mTrafficLog = new TrafficLog(null, now,
-                    currentTotalTxBytes,
-                    currentTotalRxBytes,
-                    networkType);
+            mTrafficLog = new TrafficLog(null, now, currentTotalTxBytes,
+                    currentTotalRxBytes, networkType);
 
             mAppLogs.clear();
             List<App> apps = mAppQuery.forCurrentThread().list();
             for (App app : apps) {
-                String packageName = app.getPackageName();
                 try {
-                    int uid = AppUtil.getUid(mContext, packageName);
+                    int uid = AppUtil.getUid(mContext, app.getPackageName());
                     mAppLogs.put(app, new AppLog(null, now, app.getId(),
                             TrafficStats.getUidTxBytes(uid),
                             TrafficStats.getUidRxBytes(uid),
