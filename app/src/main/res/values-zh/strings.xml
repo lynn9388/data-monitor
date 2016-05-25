@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ strings.xml
+  ~ Copyright (C) 2016  Lynn
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="app_name">Data Monitor</string>
+    <string name="action_settings">设置</string>
+    <string name="chart_mobile_data_left">剩余</string>
+    <string name="chart_mobile_data_message">本月已用</string>
+    <string name="complete_message"></string>
+    <string name="detail_data_type_header">类型</string>
+    <string name="detail_percent_header">比例（%）</string>
+    <string name="detail_total_header">总量</string>
+    <string name="dialog_used_this_month_title">本月已用流量详情</string>
+    <string name="dialog_used_today_title">今日已用流量详情</string>
+    <string name="install_certificate_title"></string>
+    <string name="mobile_down">手机流量 ↓</string>
+    <string name="nav_detail_title">流量详情</string>
+    <string name="nav_menu_send_feedback">反馈</string>
+    <string name="nav_menu_settings">设置</string>
+    <string name="nav_mobile_data_title">手机流量</string>
+    <string name="nav_realtime_title">实时流量</string>
+    <string name="pref_about_title">关于</string>
+    <string name="pref_advanced_title">高级设置</string>
+    <string name="pref_data_plan_title">包月流量</string>
+    <string name="pref_enable_data_monitoring_title">流量监控</string>
+    <string name="pref_general_title">基础设置</string>
+    <string name="pref_introduction_title">介绍</string>
+    <string name="pref_usage_policy_summary">Data Monitor 仅适用于个人和非商业用途。</string>
+    <string name="pref_usage_policy_title">使用声明</string>
+    <string name="pref_used_data_title">已用流量</string>
+    <string name="used_today">今日已用</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="used_this_month">本月已用</string>
+    <string name="till_next_settlement">距结算日</string>
+    <string name="start_service_title"></string>
+    <string name="remaining_this_month">本月剩余流量</string>
+    <string name="pref_warning_value_title">流量使用预警值</string>
+    <string name="mobile_up">手机流量 ↑</string>
+    <string name="navigation_drawer_close">关闭导航抽屉菜单</string>
+    <string name="navigation_drawer_open">打开导航抽屉菜单</string>
+    <string name="not_install_certificate_error"></string>
+    <string name="wifi_down">Wifi ↓</string>
+    <string name="wifi_up">Wifi ↑</string>
+    <string name="welcome_title"></string>
+    <string name="welcome_message"></string>
+</resources>
