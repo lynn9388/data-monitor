@@ -44,6 +44,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.lynn9388.datamonitor.NetworkService;
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.util.NetworkUtil;
 import com.lynn9388.datamonitor.util.TrafficUtil;
@@ -59,36 +60,29 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class MobileDataFragment extends Fragment {
-    private static int[] sPanelViewIds = {R.id.panel0, R.id.panel1, R.id.panel2, R.id.panel3};
-    private static int[] sPanelTitles = {R.string.used_today, R.string.used_this_month,
-            R.string.remaining_this_month, R.string.till_next_settlement};
-    private static String[] sPanelValuePrefKeys = {"pref_key_panel0", "pref_key_panel1",
-            "pref_key_panel2", "pref_key_panel3"};
-    private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
-
     private static String[] sNetworkUsageTodayPrefKeys = {
-            "pref_key_2g_today",
-            "pref_key_3g_today",
-            "pref_key_4g_today"
+            "pref_key_2g_today", "pref_key_3g_today", "pref_key_4g_today"
     };
     private static String[] sNetworkUsageThisMonthPrefKeys = {
-            "pref_key_2g_this_month",
-            "pref_key_3g_this_month",
-            "pref_key_4g_this_month",
-            "pref_key_left_this_month"
+            "pref_key_2g_this_month", "pref_key_3g_this_month",
+            "pref_key_4g_this_month", "pref_key_left_this_month"
     };
+    private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
+    private static String[] sPanelValuePrefKeys = {
+            "pref_key_panel0", "pref_key_panel1", "pref_key_panel2", "pref_key_panel3"
+    };
+
     private static NetworkUtil.NetworkType[] sNetworkTypes = {
-            NetworkUtil.NetworkType.NETWORK_TYPE_2G,
-            NetworkUtil.NetworkType.NETWORK_TYPE_3G,
-            NetworkUtil.NetworkType.NETWORK_TYPE_4G,
-            null
+            NetworkUtil.NetworkType.NETWORK_TYPE_2G, NetworkUtil.NetworkType.NETWORK_TYPE_3G,
+            NetworkUtil.NetworkType.NETWORK_TYPE_4G, null
     };
-    private int[] mColors;
 
     private PieChart mChart;
     private View[] mPanels;
 
+    private int[] mColors;
     private SharedPreferences mSharedPreferences;
+
     private Handler mHandler;
     private TimerTask mTimerTask;
 
@@ -104,9 +98,16 @@ public class MobileDataFragment extends Fragment {
         mChart.setCenterTextSize(14f);
         mChart.animateY(3000, Easing.EasingOption.EaseInOutQuad);
 
-        mPanels = new View[sPanelViewIds.length];
-        for (int i = 0; i < sPanelViewIds.length; i++) {
-            mPanels[i] = view.findViewById(sPanelViewIds[i]);
+        mPanels = new View[4];
+        int[] panelViewIds = {R.id.panel0, R.id.panel1, R.id.panel2, R.id.panel3};
+        int[] titleStringIds = {
+                R.string.used_today, R.string.used_this_month,
+                R.string.remaining_this_month, R.string.till_next_settlement
+        };
+        for (int i = 0; i < mPanels.length; i++) {
+            mPanels[i] = view.findViewById(panelViewIds[i]);
+            TextView titleView = (TextView) mPanels[i].findViewById(R.id.title);
+            titleView.setText(getString(titleStringIds[i]));
         }
         mPanels[0].setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +131,6 @@ public class MobileDataFragment extends Fragment {
         mColors[3] = Color.GRAY;
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        updateViews();
 
         return view;
     }
@@ -138,6 +138,7 @@ public class MobileDataFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateViews();
 
         mHandler = new Handler() {
             @Override
@@ -156,7 +157,7 @@ public class MobileDataFragment extends Fragment {
                 mHandler.sendEmptyMessage(0);
             }
         };
-        new Timer().scheduleAtFixedRate(mTimerTask, 0, 5000);
+        new Timer().scheduleAtFixedRate(mTimerTask, 0, NetworkService.LOG_INTERVAL);
     }
 
     @Override
@@ -221,10 +222,8 @@ public class MobileDataFragment extends Fragment {
         mChart.setData(generatePieData());
         mChart.invalidate();
 
-        for (int i = 0; i < sPanelViewIds.length; i++) {
-            TextView titleView = (TextView) mPanels[i].findViewById(R.id.title);
+        for (int i = 0; i < mPanels.length; i++) {
             TextView valueView = (TextView) mPanels[i].findViewById(R.id.value);
-            titleView.setText(getString(sPanelTitles[i]));
             valueView.setText(mSharedPreferences.getString(sPanelValuePrefKeys[i], "--"));
         }
     }

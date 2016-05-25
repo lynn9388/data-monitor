@@ -42,6 +42,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
+import com.lynn9388.datamonitor.NetworkService;
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.dao.TrafficLog;
 import com.lynn9388.datamonitor.util.NetworkUtil;
@@ -58,16 +59,17 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class DetailFragment extends Fragment {
-    private static int[] sRowViewIds = {R.id.row0, R.id.row1, R.id.row2, R.id.row3};
-    private static int[] sDataTypes = {R.string.mobile_down, R.string.mobile_up,
-            R.string.wifi_down, R.string.wifi_up};
-    private static String[] sDataUsedPrefKeys = {"pref_key_mobile_down", "pref_key_mobile_up",
-            "pref_key_wifi_down", "pref_key_wifi_up"};
+    private static String[] sDataUsedPrefKeys = {
+            "pref_key_mobile_down", "pref_key_mobile_up", "pref_key_wifi_down", "pref_key_wifi_up"
+    };
 
     private PieChart mChart;
-    private View[] mRows = new View[4];
+    private View[] mRows;
 
+    private int[] mColors;
+    private List<String> mDataTypes;
     private SharedPreferences mSharedPreferences;
+
     private Handler mHandler;
     private TimerTask mTimerTask;
 
@@ -83,12 +85,25 @@ public class DetailFragment extends Fragment {
         mChart.setCenterTextSize(14f);
         mChart.animateY(3000, Easing.EasingOption.EaseInOutQuad);
 
-        for (int i = 0; i < sRowViewIds.length; i++) {
-            mRows[i] = view.findViewById(sRowViewIds[i]);
+        mRows = new View[4];
+        int[] viewIds = {R.id.row0, R.id.row1, R.id.row2, R.id.row3};
+        for (int i = 0; i < mRows.length; i++) {
+            mRows[i] = view.findViewById(viewIds[i]);
         }
 
+        mColors = new int[4];
+        mColors[0] = ContextCompat.getColor(getContext(), R.color.color0);
+        mColors[1] = ContextCompat.getColor(getContext(), R.color.color1);
+        mColors[2] = ContextCompat.getColor(getContext(), R.color.color2);
+        mColors[3] = ContextCompat.getColor(getContext(), R.color.color3);
+
+        mDataTypes = new ArrayList<>();
+        mDataTypes.add(getString(R.string.mobile_down));
+        mDataTypes.add(getString(R.string.mobile_up));
+        mDataTypes.add(getString(R.string.wifi_down));
+        mDataTypes.add(getString(R.string.wifi_up));
+
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        updateViews();
 
         return view;
     }
@@ -96,6 +111,7 @@ public class DetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateViews();
 
         mHandler = new Handler() {
             @Override
@@ -114,7 +130,7 @@ public class DetailFragment extends Fragment {
                 mHandler.sendEmptyMessage(0);
             }
         };
-        new Timer().scheduleAtFixedRate(mTimerTask, 0, 5000);
+        new Timer().scheduleAtFixedRate(mTimerTask, 0, NetworkService.LOG_INTERVAL * 2);
     }
 
     @Override
@@ -191,29 +207,17 @@ public class DetailFragment extends Fragment {
 
     private PieData generatePieData() {
         ArrayList<Entry> entries1 = new ArrayList<>();
-        ArrayList<String> xVals = new ArrayList<>();
-
-        for (int stringId : sDataTypes) {
-            xVals.add(getString(stringId));
-        }
 
         for (int i = 0; i < sDataUsedPrefKeys.length; i++) {
             entries1.add(new Entry(mSharedPreferences.getLong(sDataUsedPrefKeys[i], 0L), i));
         }
 
         PieDataSet dataSet = new PieDataSet(entries1, "Detail");
-
-        int colors[] = {
-                ContextCompat.getColor(getContext(), R.color.color0),
-                ContextCompat.getColor(getContext(), R.color.color1),
-                ContextCompat.getColor(getContext(), R.color.color2),
-                ContextCompat.getColor(getContext(), R.color.color3)
-        };
-        dataSet.setColors(colors);
+        dataSet.setColors(mColors);
         dataSet.setValueTextColor(Color.WHITE);
         dataSet.setValueTextSize(12f);
 
-        PieData pieData = new PieData(xVals, dataSet);
+        PieData pieData = new PieData(mDataTypes, dataSet);
         pieData.setValueFormatter(new PercentFormatter());
 
         return pieData;
