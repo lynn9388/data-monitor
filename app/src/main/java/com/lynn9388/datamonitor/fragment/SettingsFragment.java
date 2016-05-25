@@ -80,8 +80,8 @@ public class SettingsFragment extends PreferenceFragment
                     }
                 });
 
-        String verionName = BuildConfig.VERSION_NAME;
-        findPreference(PREF_KEY_VERSION).setSummary("Version " + verionName);
+        String versionName = BuildConfig.VERSION_NAME;
+        findPreference(PREF_KEY_VERSION).setSummary("Version " + versionName);
     }
 
     @Override
