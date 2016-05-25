@@ -160,11 +160,11 @@ public class MobileDataFragment extends Fragment {
     private SpannableString generatePieCenterText() {
         float usagePercentage = mSharedPreferences.getFloat(sUsagePercentagePrefKey, 0f);
         if (0 < usagePercentage && usagePercentage < 50) {
-            mColors[3] = Color.GREEN;
+            mColors[3] = ContextCompat.getColor(getContext(), R.color.colorSufficiency);
         } else if (usagePercentage < 75) {
-            mColors[3] = Color.YELLOW;
+            mColors[3] = ContextCompat.getColor(getContext(), R.color.colorNormal);
         } else {
-            mColors[3] = Color.RED;
+            mColors[3] = ContextCompat.getColor(getContext(), R.color.colorLack);
         }
 
         String percentageValue = String.format(Locale.getDefault(), "%.2f %%", usagePercentage);

@@ -95,10 +95,10 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         rightAxis.setEnabled(false);
 
         colors = new int[]{
-                ContextCompat.getColor(getContext(), R.color.colorMobileDown),
-                ContextCompat.getColor(getContext(), R.color.colorMobileUp),
-                ContextCompat.getColor(getContext(), R.color.colorWifiDown),
-                ContextCompat.getColor(getContext(), R.color.colorWifiUp)
+                ContextCompat.getColor(getContext(), R.color.color0),
+                ContextCompat.getColor(getContext(), R.color.color1),
+                ContextCompat.getColor(getContext(), R.color.color2),
+                ContextCompat.getColor(getContext(), R.color.color3)
         };
 
         return view;

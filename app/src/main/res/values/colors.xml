@@ -31,8 +31,12 @@
     <color name="colorWifiSend">#607D8B</color>
     <color name="colorWifiReceive">#795548</color>
 
-    <color name="colorMobileDown">#D9508A</color>
-    <color name="colorMobileUp">#FE9507</color>
-    <color name="colorWifiDown">#6AA786</color>
-    <color name="colorWifiUp">#35C2D1</color>
+    <color name="color0">#FF5722</color>
+    <color name="color1">#009688</color>
+    <color name="color2">#3F51B5</color>
+    <color name="color3">#9C27B0</color>
+
+    <color name="colorSufficiency">#81C784</color>
+    <color name="colorNormal">#FFF176</color>
+    <color name="colorLack">#E57373</color>
 </resources>
