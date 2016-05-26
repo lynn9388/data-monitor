@@ -73,8 +73,9 @@ public class MobileDataFragment extends Fragment {
     };
 
     private static NetworkUtil.NetworkType[] sNetworkTypes = {
-            NetworkUtil.NetworkType.NETWORK_TYPE_2G, NetworkUtil.NetworkType.NETWORK_TYPE_3G,
-            NetworkUtil.NetworkType.NETWORK_TYPE_4G, null
+            NetworkUtil.NetworkType.NETWORK_TYPE_2G,
+            NetworkUtil.NetworkType.NETWORK_TYPE_3G,
+            NetworkUtil.NetworkType.NETWORK_TYPE_4G
     };
 
     private PieChart mChart;
@@ -181,7 +182,7 @@ public class MobileDataFragment extends Fragment {
 
         long usedToday = 0;
         long usedThisMonth = 0;
-        for (int i = 0; i < sNetworkTypes.length - 1; i++) {
+        for (int i = 0; i < sNetworkTypes.length; i++) {
             long dataUsage = TrafficUtil.getTotalDataUsage(getContext(), sNetworkTypes[i],
                     TrafficUtil.getStartOfDay(now), TrafficUtil.getEndOfDay(now));
             editor.putLong(sNetworkUsageTodayPrefKeys[i], dataUsage);
@@ -195,13 +196,16 @@ public class MobileDataFragment extends Fragment {
 
         editor.putString(sPanelValuePrefKeys[0], TrafficUtil.getReadableValue(usedToday));
         editor.putString(SettingsFragment.PREF_KEY_USED_DATA_IN_LOG,
-                String.valueOf(usedThisMonth / (1024.0 * 1024.0)));
+                String.valueOf(usedThisMonth / (1024f * 1024f)));
         usedThisMonth += usedDataError;
         editor.putString(SettingsFragment.PREF_KEY_USED_DATA,
-                String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024.0 * 1024.0)));
+                String.format(Locale.getDefault(), "%.2f", usedThisMonth / (1024f * 1024f)));
         editor.putString(sPanelValuePrefKeys[1], TrafficUtil.getReadableValue(usedThisMonth));
 
         long leftThisMonth = dataPlan - usedThisMonth;
+        if (leftThisMonth < 0) {
+            leftThisMonth = 0;
+        }
         editor.putLong(sNetworkUsageThisMonthPrefKeys[3], leftThisMonth);
         editor.putString(sPanelValuePrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
 
@@ -252,7 +256,7 @@ public class MobileDataFragment extends Fragment {
 
         int index = 0;
         int[] colors = new int[4];
-        for (int i = 0; i < sNetworkUsageThisMonthPrefKeys.length; i++) {
+        for (int i = 0; i < 4; i++) {
             long dataUsage = mSharedPreferences.getLong(sNetworkUsageThisMonthPrefKeys[i], 0L);
             colors[i] = mColors[i];
             if (dataUsage > 0) {
