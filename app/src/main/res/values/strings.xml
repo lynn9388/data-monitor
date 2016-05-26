@@ -79,4 +79,7 @@
     <string name="mobile_up">Mobile ↑</string>
     <string name="wifi_down">Wifi ↓</string>
     <string name="wifi_up">Wifi ↑</string>
+
+    <string name="data_warning_title">Data plan is Insufficient</string>
+    <string name="data_warning_content">Go to turn off mobile data.</string>
 </resources>

@@ -18,12 +18,19 @@
 
 package com.lynn9388.datamonitor;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.TrafficStats;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.lynn9388.datamonitor.dao.App;
@@ -32,6 +39,8 @@ import com.lynn9388.datamonitor.dao.AppLogDao;
 import com.lynn9388.datamonitor.dao.DaoSession;
 import com.lynn9388.datamonitor.dao.TrafficLog;
 import com.lynn9388.datamonitor.dao.TrafficLogDao;
+import com.lynn9388.datamonitor.fragment.MobileDataFragment;
+import com.lynn9388.datamonitor.fragment.SettingsFragment;
 import com.lynn9388.datamonitor.util.AppUtil;
 import com.lynn9388.datamonitor.util.DatabaseUtil;
 import com.lynn9388.datamonitor.util.NetworkUtil;
@@ -48,6 +57,7 @@ import de.greenrobot.dao.query.Query;
 public class NetworkService extends Service {
     public static final int LOG_INTERVAL = 10 * 1000;
     private static final String TAG = NetworkReceiver.class.getSimpleName();
+    private static String sWarnedPrefKey = "pref_key_warned";
 
     private LogTimerTask mLogTimerTask;
 
@@ -73,17 +83,17 @@ public class NetworkService extends Service {
     }
 
     private final class LogTimerTask extends TimerTask {
+        String networkType;
         private Context mContext;
-
         private TrafficLogDao mTrafficLogDao;
         private AppLogDao mAppLogDao;
         private Query mAppQuery;
-
         private TrafficLog mTrafficLog;
         private Map<App, AppLog> mAppLogs;
-
-        private long currentTotalTxBytes;
-        private long currentTotalRxBytes;
+        private long mCurrentTotalTxBytes;
+        private long mCurrentTotalRxBytes;
+        private long mCurrentTxBytes;
+        private long mCurrentRxBytes;
 
         public LogTimerTask(Context context) {
             mContext = context;
@@ -95,19 +105,21 @@ public class NetworkService extends Service {
 
             mAppLogs = new HashMap<>();
 
-            currentTotalTxBytes = TrafficStats.getTotalTxBytes();
-            currentTotalRxBytes = TrafficStats.getTotalRxBytes();
+            mCurrentTotalTxBytes = TrafficStats.getTotalTxBytes();
+            mCurrentTotalRxBytes = TrafficStats.getTotalRxBytes();
             initLog();
         }
 
         @Override
         public void run() {
-            currentTotalTxBytes = TrafficStats.getTotalTxBytes();
-            currentTotalRxBytes = TrafficStats.getTotalRxBytes();
+            mCurrentTotalTxBytes = TrafficStats.getTotalTxBytes();
+            mCurrentTotalRxBytes = TrafficStats.getTotalRxBytes();
+            mCurrentTxBytes = mCurrentTotalTxBytes - mTrafficLog.getSendBytes();
+            mCurrentRxBytes = mCurrentTotalRxBytes - mTrafficLog.getReceiveBytes();
 
             // Calculate total network usage after interval
-            mTrafficLog.setSendBytes(currentTotalTxBytes - mTrafficLog.getSendBytes());
-            mTrafficLog.setReceiveBytes(currentTotalRxBytes - mTrafficLog.getReceiveBytes());
+            mTrafficLog.setSendBytes(mCurrentTxBytes);
+            mTrafficLog.setReceiveBytes(mCurrentRxBytes);
             mTrafficLogDao.insert(mTrafficLog);
 
             // Calculate network usage of each app, don't save log if it doesn't use network
@@ -127,21 +139,23 @@ public class NetworkService extends Service {
                 }
             }
 
+            if (!networkType.equals(NetworkUtil.NetworkType.NETWORK_TYPE_WIFI.toString())) {
+                checkDataUsage();
+            }
             initLog();
         }
 
         private void initLog() {
             Date now = new Date();
 
-            String networkType;
             if (TrafficStats.getMobileTxBytes() == 0 && TrafficStats.getMobileRxBytes() == 0) {
                 networkType = NetworkUtil.NetworkType.NETWORK_TYPE_WIFI.toString();
             } else {
                 networkType = NetworkUtil.getMobileNetworkType(mContext).toString();
             }
 
-            mTrafficLog = new TrafficLog(null, now, currentTotalTxBytes,
-                    currentTotalRxBytes, networkType);
+            mTrafficLog = new TrafficLog(null, now, mCurrentTotalTxBytes,
+                    mCurrentTotalRxBytes, networkType);
 
             mAppLogs.clear();
             List<App> apps = mAppQuery.forCurrentThread().list();
@@ -156,6 +170,54 @@ public class NetworkService extends Service {
                     e.printStackTrace();
                 }
             }
+        }
+
+        private void checkDataUsage() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String dataPlanSetting = preferences.getString(SettingsFragment.PREF_KEY_DATA_PLAN, "0");
+            long dataPlan = Long.valueOf(dataPlanSetting) * 1024 * 1024;
+            int warningPercent = preferences.getInt(SettingsFragment.PREF_KEY_WARNING_PERCENT, 0);
+            long dataLeftThisMonth =
+                    preferences.getLong(MobileDataFragment.sDataLeftThisMonthPrefKey, 0L);
+            boolean warned = preferences.getBoolean(sWarnedPrefKey, false);
+
+            SharedPreferences.Editor editor = preferences.edit();
+            dataLeftThisMonth -= (mCurrentTxBytes + mCurrentRxBytes);
+            editor.putLong(MobileDataFragment.sDataLeftThisMonthPrefKey, dataLeftThisMonth);
+
+            if (100f * dataLeftThisMonth / dataPlan <= (100 - warningPercent)) {
+                if (!warned) {
+                    editor.putBoolean(sWarnedPrefKey, true);
+                    showNotification();
+                }
+            } else if (warned) {
+                editor.putBoolean(sWarnedPrefKey, false);
+            }
+
+            editor.apply();
+        }
+
+        private void showNotification() {
+            Notification.Builder mBuilder =
+                    new Notification.Builder(mContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle(getString(R.string.data_warning_title))
+                            .setContentText(getString(R.string.data_warning_content));
+
+            Intent resultIntent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+            stackBuilder.addParentStack(MainActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(0, mBuilder.build());
         }
     }
 }
