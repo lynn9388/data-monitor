@@ -64,9 +64,9 @@ public class MobileDataFragment extends Fragment {
             "pref_key_2g_today", "pref_key_3g_today", "pref_key_4g_today"
     };
     private static String[] sNetworkUsageThisMonthPrefKeys = {
-            "pref_key_2g_this_month", "pref_key_3g_this_month",
-            "pref_key_4g_this_month", "pref_key_left_this_month"
+            "pref_key_2g_this_month", "pref_key_3g_this_month", "pref_key_4g_this_month"
     };
+    public static String sDataLeftThisMonthPrefKey = "pref_key_data_left_this_month";
     private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
     private static String[] sPanelValuePrefKeys = {
             "pref_key_panel0", "pref_key_panel1", "pref_key_panel2", "pref_key_panel3"
@@ -206,7 +206,7 @@ public class MobileDataFragment extends Fragment {
         if (leftThisMonth < 0) {
             leftThisMonth = 0;
         }
-        editor.putLong(sNetworkUsageThisMonthPrefKeys[3], leftThisMonth);
+        editor.putLong(sDataLeftThisMonthPrefKey, leftThisMonth);
         editor.putString(sPanelValuePrefKeys[2], TrafficUtil.getReadableValue(leftThisMonth));
 
         Calendar calendar = Calendar.getInstance();
@@ -257,7 +257,12 @@ public class MobileDataFragment extends Fragment {
         int index = 0;
         int[] colors = new int[4];
         for (int i = 0; i < 4; i++) {
-            long dataUsage = mSharedPreferences.getLong(sNetworkUsageThisMonthPrefKeys[i], 0L);
+            long dataUsage;
+            if (i != 3) {
+                dataUsage = mSharedPreferences.getLong(sNetworkUsageThisMonthPrefKeys[i], 0L);
+            } else {
+                dataUsage = mSharedPreferences.getLong(sDataLeftThisMonthPrefKey, 0L);
+            }
             colors[i] = mColors[i];
             if (dataUsage > 0) {
                 entries1.add(new Entry(dataUsage, index));
