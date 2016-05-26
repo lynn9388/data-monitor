@@ -19,6 +19,8 @@
 package com.lynn9388.datamonitor.fragment;
 
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.TrafficStats;
 import android.os.Bundle;
@@ -26,6 +28,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,10 +45,17 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.lynn9388.datamonitor.AppAdapter;
 import com.lynn9388.datamonitor.R;
+import com.lynn9388.datamonitor.dao.App;
+import com.lynn9388.datamonitor.dao.AppDao;
+import com.lynn9388.datamonitor.util.AppUtil;
+import com.lynn9388.datamonitor.util.DatabaseUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +64,11 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class RealtimeFragment extends Fragment implements OnChartValueSelectedListener {
+    private Context mContext;
+
     private LineChart mChart;
+    private RecyclerView mRecyclerView;
+    private AppAdapter mAppAdapter;
 
     private int[] mColors;
     private String[] mDataTypes;
@@ -61,23 +76,34 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
 
     private long mLastTotalRxBytes;
     private long mLastTotalTxBytes;
+    private List<App> mApps;
+    private List<DataUsage> mAppLogs;
 
     private Handler mHandler;
     private TimerTask mTimerTask;
+    private TimerTask mUpdateAppTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mContext = getActivity();
+
         View view = inflater.inflate(R.layout.fragment_realtime, container, false);
 
         mChart = (LineChart) view.findViewById(R.id.line_chart);
         initChart();
 
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mAppAdapter = new AppAdapter(mContext);
+        mRecyclerView.setAdapter(mAppAdapter);
+
         mColors = new int[]{
-                ContextCompat.getColor(getContext(), R.color.color0),
-                ContextCompat.getColor(getContext(), R.color.color1),
-                ContextCompat.getColor(getContext(), R.color.color2),
-                ContextCompat.getColor(getContext(), R.color.color3)
+                ContextCompat.getColor(mContext, R.color.color0),
+                ContextCompat.getColor(mContext, R.color.color1),
+                ContextCompat.getColor(mContext, R.color.color2),
+                ContextCompat.getColor(mContext, R.color.color3)
         };
 
         mDataTypes = new String[]{
@@ -102,6 +128,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
                 super.handleMessage(msg);
                 if (msg.what == 0) {
                     addEntry();
+                    mAppAdapter.notifyDataSetChanged();
                 }
             }
         };
@@ -114,16 +141,37 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
             }
         };
 
+        mUpdateAppTask = new TimerTask() {
+            @Override
+            public void run() {
+                AppDao appDao = DatabaseUtil.getDaoSession(mContext).getAppDao();
+                mApps = appDao.queryBuilder().list();
+            }
+        };
+
         mLastTotalRxBytes = TrafficStats.getTotalRxBytes();
         mLastTotalTxBytes = TrafficStats.getTotalTxBytes();
+
         new Timer().scheduleAtFixedRate(mTimerTask, 1000, 1000);
+        new Timer().scheduleAtFixedRate(mUpdateAppTask, 0, 30 * 1000);
+        mAppLogs = new ArrayList<>();
+        initAppLogs();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        mUpdateAppTask.cancel();
         mTimerTask.cancel();
         mHandler.removeMessages(0);
+    }
+
+    @Override
+    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+    }
+
+    @Override
+    public void onNothingSelected() {
     }
 
     private void initChart() {
@@ -137,21 +185,21 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setPinchZoom(true);
 
         LineData data = new LineData();
-        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        data.setValueTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         mChart.setData(data);
 
         Legend legend = mChart.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
 
         XAxis xl = mChart.getXAxis();
-        xl.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        xl.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setSpaceBetweenLabels(5);
         xl.setEnabled(true);
 
         YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        leftAxis.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         leftAxis.setAxisMinValue(0f);
         leftAxis.setAxisMaxValue(2048f);
         leftAxis.setDrawGridLines(true);
@@ -174,6 +222,33 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         }
         mLastTotalRxBytes = currentTotalRxBytes;
         mLastTotalTxBytes = currentTotalTxBytes;
+
+        for (DataUsage log : mAppLogs) {
+            log.mSendBytes = TrafficStats.getUidTxBytes(log.mUid) - log.mSendBytes;
+            log.mReceiveBytes = TrafficStats.getUidRxBytes(log.mUid) - log.mReceiveBytes;
+            if (log.mSendBytes != 0 && log.mReceiveBytes != 0) {
+                mAppAdapter.addItem(log.mPackageName, log.mSendBytes, log.mReceiveBytes);
+            }
+        }
+        mAppAdapter.sortDataset();
+
+        initAppLogs();
+    }
+
+    private void initAppLogs() {
+        if (mApps != null) {
+            mAppLogs.clear();
+            for (App app : mApps) {
+                try {
+                    int uid = AppUtil.getUid(mContext, app.getPackageName());
+                    long sendBytes = TrafficStats.getUidTxBytes(uid);
+                    long receiveBytes = TrafficStats.getUidRxBytes(uid);
+                    mAppLogs.add(new DataUsage(uid, app.getPackageName(), sendBytes, receiveBytes));
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void addEntry() {
@@ -212,13 +287,17 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         return set;
     }
 
-    @Override
-    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+    private class DataUsage {
+        public int mUid;
+        public String mPackageName;
+        public long mSendBytes;
+        public long mReceiveBytes;
 
-    }
-
-    @Override
-    public void onNothingSelected() {
-
+        public DataUsage(int uid, String packageName, long sendBytes, long receiveBytes) {
+            mUid = uid;
+            mPackageName = packageName;
+            mSendBytes = sendBytes;
+            mReceiveBytes = receiveBytes;
+        }
     }
 }
