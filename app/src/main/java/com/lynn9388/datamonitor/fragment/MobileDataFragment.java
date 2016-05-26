@@ -60,13 +60,13 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class MobileDataFragment extends Fragment {
+    public static String sDataLeftThisMonthPrefKey = "pref_key_data_left_this_month";
     private static String[] sNetworkUsageTodayPrefKeys = {
             "pref_key_2g_today", "pref_key_3g_today", "pref_key_4g_today"
     };
     private static String[] sNetworkUsageThisMonthPrefKeys = {
             "pref_key_2g_this_month", "pref_key_3g_this_month", "pref_key_4g_this_month"
     };
-    public static String sDataLeftThisMonthPrefKey = "pref_key_data_left_this_month";
     private static String sUsagePercentagePrefKey = "pref_key_usage_percentage";
     private static String[] sPanelValuePrefKeys = {
             "pref_key_panel0", "pref_key_panel1", "pref_key_panel2", "pref_key_panel3"
@@ -234,9 +234,10 @@ public class MobileDataFragment extends Fragment {
 
     private SpannableString generatePieCenterText() {
         float usagePercentage = mSharedPreferences.getFloat(sUsagePercentagePrefKey, 0f);
-        if (0 < usagePercentage && usagePercentage < 50) {
+        int warningPercent = mSharedPreferences.getInt(SettingsFragment.PREF_KEY_WARNING_PERCENT, 0);
+        if (0 < usagePercentage && usagePercentage < warningPercent * 0.8) {
             mColors[3] = ContextCompat.getColor(getContext(), R.color.colorSufficiency);
-        } else if (usagePercentage < 75) {
+        } else if (usagePercentage < warningPercent) {
             mColors[3] = ContextCompat.getColor(getContext(), R.color.colorNormal);
         } else {
             mColors[3] = ContextCompat.getColor(getContext(), R.color.colorLack);
