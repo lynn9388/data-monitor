@@ -53,13 +53,15 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class RealtimeFragment extends Fragment implements OnChartValueSelectedListener {
-    public static int[] sDataTypes = {R.string.mobile_down, R.string.mobile_up,
-            R.string.wifi_down, R.string.wifi_up};
-    long mLastTotalRxBytes;
-    long mLastTotalTxBytes;
     private LineChart mChart;
-    private int[] colors;
-    private float[] bytes;
+
+    private int[] mColors;
+    private String[] mDataTypes;
+    private float[] mBytes;
+
+    private long mLastTotalRxBytes;
+    private long mLastTotalTxBytes;
+
     private Handler mHandler;
     private TimerTask mTimerTask;
 
@@ -71,14 +73,21 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart = (LineChart) view.findViewById(R.id.line_chart);
         initChart();
 
-        colors = new int[]{
+        mColors = new int[]{
                 ContextCompat.getColor(getContext(), R.color.color0),
                 ContextCompat.getColor(getContext(), R.color.color1),
                 ContextCompat.getColor(getContext(), R.color.color2),
                 ContextCompat.getColor(getContext(), R.color.color3)
         };
 
-        bytes = new float[4];
+        mDataTypes = new String[]{
+                getString(R.string.mobile_down),
+                getString(R.string.mobile_up),
+                getString(R.string.wifi_down),
+                getString(R.string.wifi_up)
+        };
+
+        mBytes = new float[4];
 
         return view;
     }
@@ -157,11 +166,11 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
         long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
         if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
-            bytes[2] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
-            bytes[3] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+            mBytes[2] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
+            mBytes[3] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
         } else {
-            bytes[0] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
-            bytes[1] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+            mBytes[0] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
+            mBytes[1] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
         }
         mLastTotalRxBytes = currentTotalRxBytes;
         mLastTotalTxBytes = currentTotalTxBytes;
@@ -173,13 +182,13 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
             data.addXValue(format.format(new Date()));
 
-            for (int i = 0; i < bytes.length; i++) {
+            for (int i = 0; i < mBytes.length; i++) {
                 ILineDataSet dataSet = data.getDataSetByIndex(i);
                 if (dataSet == null) {
                     dataSet = createSet(i);
                     data.addDataSet(dataSet);
                 }
-                data.addEntry(new Entry(bytes[i], dataSet.getEntryCount()), i);
+                data.addEntry(new Entry(mBytes[i], dataSet.getEntryCount()), i);
             }
 
             mChart.notifyDataSetChanged();
@@ -189,15 +198,15 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
     }
 
     private LineDataSet createSet(int i) {
-        LineDataSet set = new LineDataSet(null, getString(sDataTypes[i]));
+        LineDataSet set = new LineDataSet(null, mDataTypes[i]);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setDrawCircles(false);
-        set.setColor(colors[i]);
+        set.setColor(mColors[i]);
         set.setLineWidth(2f);
         set.setFillAlpha(65);
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(colors[i]);
+        set.setValueTextColor(mColors[i]);
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;
