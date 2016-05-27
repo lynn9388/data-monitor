@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".fragment.DetailFragment">
+    tools:context=".fragment.OverviewFragment">
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
