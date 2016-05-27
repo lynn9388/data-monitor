@@ -27,12 +27,15 @@ import com.lynn9388.datamonitor.dao.DaoSession;
 
 public class DatabaseUtil {
     private static final String TAG = DatabaseUtil.class.getSimpleName();
+    private static DaoMaster mDaoMaster;
 
     public static DaoSession getDaoSession(Context context) {
-        DaoMaster.DevOpenHelper helper =
-                new DaoMaster.DevOpenHelper(context, MainActivity.DATABASE_NAME, null);
-        SQLiteDatabase database = helper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(database);
-        return daoMaster.newSession();
+        if (mDaoMaster == null) {
+            DaoMaster.DevOpenHelper helper =
+                    new DaoMaster.DevOpenHelper(context, MainActivity.DATABASE_NAME, null);
+            SQLiteDatabase database = helper.getWritableDatabase();
+            mDaoMaster = new DaoMaster(database);
+        }
+        return mDaoMaster.newSession();
     }
 }
