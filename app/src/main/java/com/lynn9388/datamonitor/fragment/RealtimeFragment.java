@@ -67,7 +67,6 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
     private Context mContext;
 
     private LineChart mChart;
-    private RecyclerView mRecyclerView;
     private AppAdapter mAppAdapter;
 
     private int[] mColors;
@@ -93,11 +92,11 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart = (LineChart) view.findViewById(R.id.line_chart);
         initChart();
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         mAppAdapter = new AppAdapter(mContext);
-        mRecyclerView.setAdapter(mAppAdapter);
+        recyclerView.setAdapter(mAppAdapter);
 
         mColors = new int[]{
                 ContextCompat.getColor(mContext, R.color.color0),
@@ -185,21 +184,22 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setPinchZoom(true);
 
         LineData data = new LineData();
-        data.setValueTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         mChart.setData(data);
 
         Legend legend = mChart.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
 
+        int axisColor = ContextCompat.getColor(mContext, R.color.colorAccent);
+
         XAxis xl = mChart.getXAxis();
-        xl.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+        xl.setTextColor(axisColor);
         xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setSpaceBetweenLabels(5);
         xl.setEnabled(true);
 
         YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+        leftAxis.setTextColor(axisColor);
         leftAxis.setAxisMinValue(0f);
         leftAxis.setDrawGridLines(true);
 
