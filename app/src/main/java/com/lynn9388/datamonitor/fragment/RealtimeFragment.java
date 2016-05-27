@@ -201,7 +201,6 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         leftAxis.setAxisMinValue(0f);
-        leftAxis.setAxisMaxValue(2048f);
         leftAxis.setDrawGridLines(true);
 
         YAxis rightAxis = mChart.getAxisRight();
@@ -288,12 +287,12 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
     }
 
     private class DataUsage {
-        public int mUid;
-        public String mPackageName;
-        public long mSendBytes;
-        public long mReceiveBytes;
+        private int mUid;
+        private String mPackageName;
+        private long mSendBytes;
+        private long mReceiveBytes;
 
-        public DataUsage(int uid, String packageName, long sendBytes, long receiveBytes) {
+        private DataUsage(int uid, String packageName, long sendBytes, long receiveBytes) {
             mUid = uid;
             mPackageName = packageName;
             mSendBytes = sendBytes;
