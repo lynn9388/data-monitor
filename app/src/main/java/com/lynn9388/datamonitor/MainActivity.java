@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -34,9 +35,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
-import com.lynn9388.datamonitor.fragment.OverviewFragment;
 import com.lynn9388.datamonitor.fragment.RealtimeFragment;
 import com.lynn9388.datamonitor.fragment.SettingsFragment;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_mobile_data) {
             replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
         } else if (id == R.id.nav_detail) {
-            replaceFragment(new OverviewFragment(), getString(R.string.nav_detail_title));
+            replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
         } else if (id == R.id.nav_realtime) {
             replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
         } else if (id == R.id.nav_manage) {
@@ -143,6 +145,13 @@ public class MainActivity extends AppCompatActivity
      * @param title    The new title for the toolbar.
      */
     private void replaceFragment(Fragment fragment, String title) {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        if (getString(R.string.nav_detail_title).equals(title)) {
+            tabLayout.setVisibility(View.VISIBLE);
+        } else {
+            tabLayout.setVisibility(View.GONE);
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_content, fragment).commit();
