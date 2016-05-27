@@ -17,7 +17,6 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group
         android:id="@+id/group_feature"
         android:checkableBehavior="single">
@@ -39,7 +38,6 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Tools" />
     </group>
-
     <group android:id="@+id/group_tools">
         <item
             android:id="@+id/nav_settings"
@@ -48,5 +46,4 @@
             android:id="@+id/nav_send_feedback"
             android:title="@string/nav_menu_send_feedback" />
     </group>
-
 </menu>
