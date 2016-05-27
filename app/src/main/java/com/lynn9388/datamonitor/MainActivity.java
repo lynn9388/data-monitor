@@ -20,7 +20,6 @@ package com.lynn9388.datamonitor;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -36,7 +35,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
 import com.lynn9388.datamonitor.fragment.RealtimeFragment;
@@ -48,8 +46,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     // Indicates whether user has opened the app before
     public static final String PREF_KEY_HAS_OPENED = "pref_key_has_opened";
-
-    public static final String DATABASE_NAME = "DataMonitor.db";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +74,6 @@ public class MainActivity extends AppCompatActivity
             navigationView.setNavigationItemSelectedListener(this);
         }
         replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
-
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, DATABASE_NAME, null);
-        SQLiteDatabase database = helper.getWritableDatabase();
 
         boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);

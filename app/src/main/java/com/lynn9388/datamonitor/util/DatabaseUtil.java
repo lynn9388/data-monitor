@@ -21,18 +21,18 @@ package com.lynn9388.datamonitor.util;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.lynn9388.datamonitor.MainActivity;
 import com.lynn9388.datamonitor.dao.DaoMaster;
 import com.lynn9388.datamonitor.dao.DaoSession;
 
 public class DatabaseUtil {
+    public static final String DATABASE_NAME = "DataMonitor.db";
     private static final String TAG = DatabaseUtil.class.getSimpleName();
     private static DaoMaster mDaoMaster;
 
     public static DaoSession getDaoSession(Context context) {
         if (mDaoMaster == null) {
             DaoMaster.DevOpenHelper helper =
-                    new DaoMaster.DevOpenHelper(context, MainActivity.DATABASE_NAME, null);
+                    new DaoMaster.DevOpenHelper(context, DATABASE_NAME, null);
             SQLiteDatabase database = helper.getWritableDatabase();
             mDaoMaster = new DaoMaster(database);
         }
