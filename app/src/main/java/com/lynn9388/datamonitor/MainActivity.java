@@ -39,7 +39,7 @@ import android.view.View;
 
 import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
-import com.lynn9388.datamonitor.fragment.RealtimeFragment;
+import com.lynn9388.datamonitor.fragment.RealTimeFragment;
 import com.lynn9388.datamonitor.fragment.SettingsFragment;
 import com.lynn9388.datamonitor.introduction.IntroductionActivity;
 import com.lynn9388.datamonitor.util.NetworkUtil;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private MobileDataFragment mMobileDataFragment;
     private DetailFragment mDetailFragment;
-    private RealtimeFragment mRealtimeFragment;
+    private RealTimeFragment mRealTimeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
+        replaceFragment(new RealTimeFragment(), getString(R.string.nav_real_time_title));
 
         boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);
@@ -134,10 +134,10 @@ public class MainActivity extends AppCompatActivity
             }
             replaceFragment(mDetailFragment, getString(R.string.nav_detail_title));
         } else if (id == R.id.nav_realtime) {
-            if (mRealtimeFragment == null) {
-                mRealtimeFragment = new RealtimeFragment();
+            if (mRealTimeFragment == null) {
+                mRealTimeFragment = new RealTimeFragment();
             }
-            replaceFragment(mRealtimeFragment, getString(R.string.nav_realtime_title));
+            replaceFragment(mRealTimeFragment, getString(R.string.nav_real_time_title));
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_settings) {

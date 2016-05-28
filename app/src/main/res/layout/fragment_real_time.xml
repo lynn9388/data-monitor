@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.lynn9388.datamonitor.fragment.RealtimeFragment">
+    tools:context="com.lynn9388.datamonitor.fragment.RealTimeFragment">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"

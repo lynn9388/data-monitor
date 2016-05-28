@@ -65,7 +65,7 @@ import java.util.TimerTask;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RealtimeFragment extends Fragment implements OnChartValueSelectedListener {
+public class RealTimeFragment extends Fragment implements OnChartValueSelectedListener {
     private Context mContext;
 
     private LineChart mChart;
@@ -80,7 +80,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
     private List<App> mApps;
     private List<DataUsage> mAppLogs;
 
-    private Handler mHandler;
+    private static Handler mHandler;
     private TimerTask mTimerTask;
     private TimerTask mUpdateAppTask;
 
@@ -89,7 +89,7 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
                              Bundle savedInstanceState) {
         mContext = getActivity();
 
-        View view = inflater.inflate(R.layout.fragment_realtime, container, false);
+        View view = inflater.inflate(R.layout.fragment_real_time, container, false);
 
         mChart = (LineChart) view.findViewById(R.id.line_chart);
         initChart();
