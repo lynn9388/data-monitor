@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity
     // Indicates whether user has opened the app before
     public static final String PREF_KEY_HAS_OPENED = "pref_key_has_opened";
 
+    private MobileDataFragment mMobileDataFragment;
+    private DetailFragment mDetailFragment;
+    private RealtimeFragment mRealtimeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,11 +124,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_mobile_data) {
-            replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
+            if (mMobileDataFragment == null) {
+                mMobileDataFragment = new MobileDataFragment();
+            }
+            replaceFragment(mMobileDataFragment, getString(R.string.nav_mobile_data_title));
         } else if (id == R.id.nav_detail) {
-            replaceFragment(new DetailFragment(), getString(R.string.nav_detail_title));
+            if (mDetailFragment == null) {
+                mDetailFragment = new DetailFragment();
+            }
+            replaceFragment(mDetailFragment, getString(R.string.nav_detail_title));
         } else if (id == R.id.nav_realtime) {
-            replaceFragment(new RealtimeFragment(), getString(R.string.nav_realtime_title));
+            if (mRealtimeFragment == null) {
+                mRealtimeFragment = new RealtimeFragment();
+            }
+            replaceFragment(mRealtimeFragment, getString(R.string.nav_realtime_title));
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_settings) {
