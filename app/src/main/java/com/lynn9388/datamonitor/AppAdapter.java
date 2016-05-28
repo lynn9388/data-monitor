@@ -20,9 +20,12 @@ package com.lynn9388.datamonitor;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,6 +99,13 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
         });
     }
 
+    private void showAppDetails(String packageName) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", packageName, null);
+        intent.setData(uri);
+        mContext.startActivity(intent);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView mIconView;
         public TextView mAppNameView;
@@ -110,6 +120,15 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
             mPackageNameView = (TextView) itemView.findViewById(R.id.package_name);
             mDataSendView = (TextView) itemView.findViewById(R.id.data_send);
             mDataReceiveView = (TextView) itemView.findViewById(R.id.data_receive);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
+                    String packageName = packageNameView.getText().toString();
+                    showAppDetails(packageName);
+                }
+            });
         }
     }
 
