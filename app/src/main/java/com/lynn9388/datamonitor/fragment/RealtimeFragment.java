@@ -41,6 +41,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -51,6 +52,7 @@ import com.lynn9388.datamonitor.dao.App;
 import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.util.AppUtil;
 import com.lynn9388.datamonitor.util.DatabaseUtil;
+import com.lynn9388.datamonitor.util.TrafficUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -180,31 +182,34 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(false);
         mChart.setPinchZoom(true);
+        mChart.setDrawGridBackground(false);
 
-        LineData data = new LineData();
-        mChart.setData(data);
+        mChart.setData(new LineData());
 
         Legend legend = mChart.getLegend();
         legend.setForm(Legend.LegendForm.LINE);
 
         int axisColor = ContextCompat.getColor(mContext, R.color.colorAccent);
 
-        XAxis xl = mChart.getXAxis();
-        xl.setTextColor(axisColor);
-        xl.setDrawGridLines(false);
-        xl.setAvoidFirstLastClipping(true);
-        xl.setSpaceBetweenLabels(5);
-        xl.setEnabled(true);
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setTextColor(axisColor);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setSpaceBetweenLabels(5);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTextColor(axisColor);
         leftAxis.setAxisMinValue(0f);
         leftAxis.setDrawGridLines(true);
+        leftAxis.setValueFormatter(new YAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, YAxis yAxis) {
+                return TrafficUtil.getReadableValue((long) value);
+            }
+        });
 
-        YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setEnabled(false);
+        mChart.getAxisRight().setEnabled(false);
     }
 
     private void updateData() {
@@ -213,11 +218,11 @@ public class RealtimeFragment extends Fragment implements OnChartValueSelectedLi
         long currentTotalRxBytes = TrafficStats.getTotalRxBytes();
         long currentTotalTxBytes = TrafficStats.getTotalTxBytes();
         if (currentMobileRxBytes == 0 && currentMobileTxBytes == 0) {
-            mBytes[2] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
-            mBytes[3] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+            mBytes[2] = (currentTotalRxBytes - mLastTotalRxBytes);
+            mBytes[3] = (currentTotalTxBytes - mLastTotalTxBytes);
         } else {
-            mBytes[0] = (currentTotalRxBytes - mLastTotalRxBytes) / 1024f;
-            mBytes[1] = (currentTotalTxBytes - mLastTotalTxBytes) / 1024f;
+            mBytes[0] = (currentTotalRxBytes - mLastTotalRxBytes);
+            mBytes[1] = (currentTotalTxBytes - mLastTotalTxBytes);
         }
         mLastTotalRxBytes = currentTotalRxBytes;
         mLastTotalTxBytes = currentTotalTxBytes;
