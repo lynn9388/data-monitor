@@ -24,19 +24,16 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcome_title">Welcome to Data Monitor.</string>
-    <string name="welcome_message">A easy way to manage network traffic</string>
+    <string name="welcome_message">Manage network traffic easier</string>
 
-    <string name="install_certificate_title">Install certificate for TLS connections.</string>
-    <string name="install_certificate_button_start">INSTALL</string>
-    <string name="not_install_certificate_error">Please install the certificate in order to continue.</string>
+    <string name="easy_use_title">Easy to use, everything is ready to go.</string>
+    <string name="easy_use_message">Make your life simpler and safer</string>
 
-    <string name="start_service_title">Start service fot the first time.</string>
-    <string name="start_service_button_start">START</string>
-    <string name="not_start_service_error">Please start the service in order to continue.</string>
+    <string name="open_source_title">It\'s Free and Open Source, go website for more information.</string>
+    <string name="open_source_button">GO GITHUB</string>
 
-    <string name="complete_title">You are all set. Enjoy Data Monitor.</string>
+    <string name="complete_title">You are all set. Enjoy Data Monitor :-)</string>
     <string name="complete_message">GET STARTED</string>
 
     <string name="chart_mobile_data_message">Used this month</string>

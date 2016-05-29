@@ -39,14 +39,14 @@ public class IntroductionActivity extends AppIntro {
                 getString(R.string.welcome_message),
                 R.drawable.ic_welcome,
                 Color.parseColor("#009688")));
-        addSlide(new CertificateSlide().getInstance(getString(R.string.install_certificate_title),
-                R.drawable.ic_install_certificate,
-                getString(R.string.install_certificate_button_start),
-                Color.parseColor("#8BC34A")));
-        addSlide(new ServiceSlide().getInstance(getString(R.string.start_service_title),
-                R.drawable.ic_start_service,
-                getString(R.string.start_service_button_start),
+        addSlide(AppIntroFragment.newInstance(getString(R.string.easy_use_title),
+                getString(R.string.easy_use_message),
+                R.drawable.ic_easy_use,
                 Color.parseColor("#448AFF")));
+        addSlide(new OpenSourceSlide().getInstance(getString(R.string.open_source_title),
+                R.drawable.ic_open_source,
+                getString(R.string.open_source_button),
+                Color.parseColor("#795548")));
         addSlide(new DoneSlide().getInstance(getString(R.string.complete_title),
                 R.drawable.ic_done,
                 getString(R.string.complete_message),

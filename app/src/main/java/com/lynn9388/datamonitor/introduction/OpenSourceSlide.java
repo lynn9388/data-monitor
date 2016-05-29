@@ -1,5 +1,5 @@
 /*
- * ServiceIntroduction
+ * OpenSlide
  * Copyright (C) 2016  Lynn
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,26 +18,16 @@
 
 package com.lynn9388.datamonitor.introduction;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
-import android.widget.Toast;
 
-import com.github.paolorotolo.appintro.ISlidePolicy;
-import com.lynn9388.datamonitor.R;
-
-public class ServiceSlide extends SlideFragment<ServiceSlide> implements ISlidePolicy {
-    @Override
-    public boolean isPolicyRespected() {
-        return true;
-    }
-
-    @Override
-    public void onUserIllegallyRequestedNextPage() {
-        Toast.makeText(getContext(), getString(R.string.not_start_service_error),
-                Toast.LENGTH_SHORT).show();
-    }
-
+public class OpenSourceSlide extends SlideFragment<OpenSourceSlide> {
     @Override
     public void onClick(View v) {
-
+        String url = "https://github.com/lynn9388/data-monitor";
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 }
