@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        replaceFragment(new RealTimeFragment(), getString(R.string.nav_real_time_title));
+        replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
 
         boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);
@@ -138,8 +138,6 @@ public class MainActivity extends AppCompatActivity
                 mRealTimeFragment = new RealTimeFragment();
             }
             replaceFragment(mRealTimeFragment, getString(R.string.nav_real_time_title));
-        } else if (id == R.id.nav_manage) {
-
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_send_feedback) {
