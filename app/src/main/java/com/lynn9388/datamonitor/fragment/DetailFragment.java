@@ -58,7 +58,8 @@ public class DetailFragment extends Fragment {
         private TabAdapter(FragmentManager fm) {
             super(fm);
             mTitles = new String[]{
-                    getString(R.string.tab_overview_title)
+                    getString(R.string.tab_overview_title),
+                    getString(R.string.tab_wifi_title)
             };
         }
 
@@ -67,6 +68,8 @@ public class DetailFragment extends Fragment {
             switch (position) {
                 case 0:
                     return new OverviewFragment();
+                case 1:
+                    return new WifiDetailFragment();
                 default:
                     return null;
             }
@@ -74,7 +77,7 @@ public class DetailFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override

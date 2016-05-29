@@ -84,4 +84,5 @@
     <string name="data_warning_content">Go to turn off mobile data.</string>
 
     <string name="tab_overview_title">Overview</string>
+    <string name="tab_wifi_title">Wi-Fi</string>
 </resources>
