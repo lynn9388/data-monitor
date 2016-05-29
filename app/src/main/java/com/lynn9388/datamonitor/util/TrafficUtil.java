@@ -46,6 +46,17 @@ public class TrafficUtil {
         return getStartOfDay(calendar.getTime());
     }
 
+    public static Date getSeveralDaysAgo(Date date, int days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, -days);
+        return calendar.getTime();
+    }
+
+    public static Date getOneHourLater(Date date) {
+        return new Date(date.getTime() + 3600000);
+    }
+
     public static Date getEndOfMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
