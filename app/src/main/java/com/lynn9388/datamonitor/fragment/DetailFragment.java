@@ -59,6 +59,7 @@ public class DetailFragment extends Fragment {
             super(fm);
             mTitles = new String[]{
                     getString(R.string.tab_overview_title),
+                    getString(R.string.tab_mobile_title),
                     getString(R.string.tab_wifi_title)
             };
         }
@@ -69,6 +70,8 @@ public class DetailFragment extends Fragment {
                 case 0:
                     return new OverviewFragment();
                 case 1:
+                    return new MobileDetailFragment();
+                case 2:
                     return new WifiDetailFragment();
                 default:
                     return null;
@@ -77,7 +80,7 @@ public class DetailFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
