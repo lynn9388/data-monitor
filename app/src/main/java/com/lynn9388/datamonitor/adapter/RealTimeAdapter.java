@@ -27,8 +27,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.util.TrafficUtil;
@@ -38,7 +36,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHolder> {
+public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
     private Context mContext;
     private List<AppInfo> mDataset;
 
@@ -48,14 +46,19 @@ public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHo
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AppHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_app_data_usage, parent, false);
-        return new ViewHolder(view);
+        return new AppHolder(view) {
+            @Override
+            void onClick(String packageName) {
+                showAppDetails(packageName);
+            }
+        };
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(AppHolder holder, int position) {
         AppInfo appInfo = mDataset.get(position);
         holder.mIconView.setImageDrawable(appInfo.icon);
         holder.mAppNameView.setText(appInfo.mAppName);
@@ -102,31 +105,5 @@ public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHo
         Uri uri = Uri.fromParts("package", packageName, null);
         intent.setData(uri);
         mContext.startActivity(intent);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView mIconView;
-        public TextView mAppNameView;
-        public TextView mPackageNameView;
-        public TextView mDataSendView;
-        public TextView mDataReceiveView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mIconView = (ImageView) itemView.findViewById(R.id.icon);
-            mAppNameView = (TextView) itemView.findViewById(R.id.app_name);
-            mPackageNameView = (TextView) itemView.findViewById(R.id.package_name);
-            mDataSendView = (TextView) itemView.findViewById(R.id.data_send);
-            mDataReceiveView = (TextView) itemView.findViewById(R.id.data_receive);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
-                    String packageName = packageNameView.getText().toString();
-                    showAppDetails(packageName);
-                }
-            });
-        }
     }
 }
