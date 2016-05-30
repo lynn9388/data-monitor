@@ -46,8 +46,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.lynn9388.datamonitor.AppAdapter;
 import com.lynn9388.datamonitor.R;
+import com.lynn9388.datamonitor.RealTimeAdapter;
 import com.lynn9388.datamonitor.dao.App;
 import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.util.AppUtil;
@@ -66,21 +66,17 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class RealTimeFragment extends Fragment implements OnChartValueSelectedListener {
+    private static Handler mHandler;
     private Context mContext;
-
     private LineChart mChart;
-    private AppAdapter mAppAdapter;
-
+    private RealTimeAdapter mRealTimeAdapter;
     private int[] mColors;
     private String[] mDataTypes;
     private float[] mBytes;
-
     private long mLastTotalRxBytes;
     private long mLastTotalTxBytes;
     private List<App> mApps;
     private List<DataUsage> mAppLogs;
-
-    private static Handler mHandler;
     private TimerTask mTimerTask;
     private TimerTask mUpdateAppTask;
 
@@ -97,8 +93,8 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
-        mAppAdapter = new AppAdapter(mContext);
-        recyclerView.setAdapter(mAppAdapter);
+        mRealTimeAdapter = new RealTimeAdapter(mContext);
+        recyclerView.setAdapter(mRealTimeAdapter);
 
         mColors = new int[]{
                 ContextCompat.getColor(mContext, R.color.color0),
@@ -129,7 +125,7 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
                 super.handleMessage(msg);
                 if (msg.what == 0) {
                     addEntry();
-                    mAppAdapter.notifyDataSetChanged();
+                    mRealTimeAdapter.notifyDataSetChanged();
                 }
             }
         };
@@ -231,10 +227,10 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
             log.mSendBytes = TrafficStats.getUidTxBytes(log.mUid) - log.mSendBytes;
             log.mReceiveBytes = TrafficStats.getUidRxBytes(log.mUid) - log.mReceiveBytes;
             if (log.mSendBytes != 0 && log.mReceiveBytes != 0) {
-                mAppAdapter.addItem(log.mPackageName, log.mSendBytes, log.mReceiveBytes);
+                mRealTimeAdapter.addItem(log.mPackageName, log.mSendBytes, log.mReceiveBytes);
             }
         }
-        mAppAdapter.sortDataset();
+        mRealTimeAdapter.sortDataset();
 
         initAppLogs();
     }

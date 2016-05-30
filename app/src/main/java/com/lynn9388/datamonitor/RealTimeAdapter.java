@@ -40,11 +40,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
+public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHolder> {
     private Context mContext;
     private List<AppInfo> mDataset;
 
-    public AppAdapter(Context context) {
+    public RealTimeAdapter(Context context) {
         mContext = context;
         mDataset = new ArrayList<>();
     }
