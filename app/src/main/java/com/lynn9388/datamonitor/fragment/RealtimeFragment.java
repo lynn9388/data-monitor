@@ -47,7 +47,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.lynn9388.datamonitor.R;
-import com.lynn9388.datamonitor.RealTimeAdapter;
+import com.lynn9388.datamonitor.adapter.RealTimeAdapter;
 import com.lynn9388.datamonitor.dao.App;
 import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.util.AppUtil;

@@ -1,5 +1,5 @@
 /*
- * AppAdapter
+ * RealTimeAdapter
  * Copyright (C) 2016  Lynn
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.lynn9388.datamonitor;
+package com.lynn9388.datamonitor.adapter;
 
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.util.TrafficUtil;
 
 import java.util.ArrayList;
@@ -80,7 +78,7 @@ public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHo
             }
         }
         if (target == null) {
-            target = new AppInfo(packageName, sendBytes, receiveBytes);
+            target = new AppInfo(mContext, packageName, sendBytes, receiveBytes);
             mDataset.add(target);
         } else {
             target.mSendBytes += sendBytes;
@@ -129,30 +127,6 @@ public class RealTimeAdapter extends RecyclerView.Adapter<RealTimeAdapter.ViewHo
                     showAppDetails(packageName);
                 }
             });
-        }
-    }
-
-    private class AppInfo {
-        public Drawable icon;
-        public String mAppName;
-        public String mPackageName;
-        public Long mSendBytes;
-        public long mReceiveBytes;
-
-        public AppInfo(String packageName, long sendBytes, long receiveBytes) {
-            PackageManager packageManager = mContext.getPackageManager();
-            try {
-                icon = packageManager.getApplicationIcon(packageName);
-                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
-                mAppName = String.valueOf(packageManager.getApplicationLabel(applicationInfo));
-            } catch (PackageManager.NameNotFoundException e) {
-                icon = null;
-                mAppName = "";
-                e.printStackTrace();
-            }
-            mPackageName = packageName;
-            mSendBytes = sendBytes;
-            mReceiveBytes = receiveBytes;
         }
     }
 }
