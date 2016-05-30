@@ -65,4 +65,5 @@
     <string name="tab_mobile_title">手机流量</string>
     <string name="tab_overview_title">概览</string>
     <string name="tab_wifi_title">Wi-Fi</string>
+    <string name="nav_apps_title">"应用 "</string>
 </resources>

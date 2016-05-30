@@ -37,6 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.lynn9388.datamonitor.fragment.AppsFragment;
 import com.lynn9388.datamonitor.fragment.DetailFragment;
 import com.lynn9388.datamonitor.fragment.MobileDataFragment;
 import com.lynn9388.datamonitor.fragment.RealTimeFragment;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private MobileDataFragment mMobileDataFragment;
     private DetailFragment mDetailFragment;
     private RealTimeFragment mRealTimeFragment;
+    private AppsFragment mAppsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         if (drawer != null) {
-            drawer.setDrawerListener(toggle);
+            drawer.addDrawerListener(toggle);
         }
         toggle.syncState();
 
@@ -138,6 +140,11 @@ public class MainActivity extends AppCompatActivity
                 mRealTimeFragment = new RealTimeFragment();
             }
             replaceFragment(mRealTimeFragment, getString(R.string.nav_real_time_title));
+        } else if (id == R.id.nav_apps) {
+            if (mAppsFragment == null) {
+                mAppsFragment = new AppsFragment();
+            }
+            replaceFragment(mAppsFragment, getString(R.string.nav_apps_title));
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_send_feedback) {

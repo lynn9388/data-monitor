@@ -33,6 +33,10 @@
             android:id="@+id/nav_realtime"
             android:icon="@drawable/ic_timeline_black_24dp"
             android:title="@string/nav_real_time_title" />
+        <item
+            android:id="@+id/nav_apps"
+            android:icon="@drawable/ic_adb_black_24dp"
+            android:title="@string/nav_apps_title" />
     </group>
     <group android:id="@+id/group_tools">
         <item
