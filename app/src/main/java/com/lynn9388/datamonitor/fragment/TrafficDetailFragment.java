@@ -110,7 +110,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
 
     private void initChart() {
         mChart.setOnChartValueSelectedListener(this);
-        mChart.setNoDataText("");
+        mChart.setNoDataText(getString(R.string.no_network_data_message));
         mChart.setDescription("");
         mChart.setMaxVisibleValueCount(10);
 
