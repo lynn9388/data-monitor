@@ -100,12 +100,14 @@ public class AppsFragment extends Fragment {
     private void updateData() {
         List<App> apps = DatabaseUtil.getDaoSession(mContext).getAppDao().queryBuilder().list();
         for (App app : apps) {
-            if (!mAppsAdapter.contains(app.getPackageName())) {
-                mAppsAdapter.addItem(app.getPackageName(), app.getTotalSendBytes(),
-                        app.getTotalReceiveBytes());
-            } else {
-                mAppsAdapter.updateItem(app.getPackageName(), app.getTotalSendBytes(),
-                        app.getTotalReceiveBytes());
+            if (app.getTotalSendBytes() != 0 || app.getTotalReceiveBytes() != 0) {
+                if (!mAppsAdapter.contains(app.getPackageName())) {
+                    mAppsAdapter.addItem(app.getPackageName(), app.getTotalSendBytes(),
+                            app.getTotalReceiveBytes());
+                } else {
+                    mAppsAdapter.updateItem(app.getPackageName(), app.getTotalSendBytes(),
+                            app.getTotalReceiveBytes());
+                }
             }
         }
         mAppsAdapter.sortDataSet();
