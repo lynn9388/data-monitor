@@ -83,19 +83,25 @@ public class NetworkService extends Service {
     }
 
     private final class LogTimerTask extends TimerTask {
-        String networkType;
         private Context mContext;
+        private String networkType;
+
         private TrafficLogDao mTrafficLogDao;
         private AppLogDao mAppLogDao;
+
         private Query mAppQuery;
+
+        private int mLogCount;
         private TrafficLog mTrafficLog;
+        private Map<App, Integer> mAppUids;
         private Map<App, AppLog> mAppLogs;
+
         private long mCurrentTotalTxBytes;
         private long mCurrentTotalRxBytes;
         private long mCurrentTxBytes;
         private long mCurrentRxBytes;
 
-        public LogTimerTask(Context context) {
+        private LogTimerTask(Context context) {
             mContext = context;
 
             DaoSession daoSession = DatabaseUtil.getDaoSession(context);
@@ -103,6 +109,8 @@ public class NetworkService extends Service {
             mAppLogDao = daoSession.getAppLogDao();
             mAppQuery = daoSession.getAppDao().queryBuilder().build();
 
+            mLogCount = 0;
+            mAppUids = new HashMap<>();
             mAppLogs = new HashMap<>();
 
             mCurrentTotalTxBytes = TrafficStats.getTotalTxBytes();
@@ -112,6 +120,7 @@ public class NetworkService extends Service {
 
         @Override
         public void run() {
+            mLogCount++;
             mCurrentTotalTxBytes = TrafficStats.getTotalTxBytes();
             mCurrentTotalRxBytes = TrafficStats.getTotalRxBytes();
             mCurrentTxBytes = mCurrentTotalTxBytes - mTrafficLog.getSendBytes();
@@ -124,18 +133,14 @@ public class NetworkService extends Service {
 
             // Calculate network usage of each app, don't save log if it doesn't use network
             for (Map.Entry<App, AppLog> entry : mAppLogs.entrySet()) {
-                try {
-                    int uid = AppUtil.getUid(mContext, entry.getKey().getPackageName());
-                    AppLog log = entry.getValue();
-                    long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
-                    long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
-                    if (sendBytes != 0 || receiveBytes != 0) {
-                        log.setSendBytes(sendBytes);
-                        log.setReceiveBytes(receiveBytes);
-                        mAppLogDao.insert(log);
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
+                int uid = mAppUids.get(entry.getKey());
+                AppLog log = entry.getValue();
+                long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
+                long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
+                if (sendBytes != 0 || receiveBytes != 0) {
+                    log.setSendBytes(sendBytes);
+                    log.setReceiveBytes(receiveBytes);
+                    mAppLogDao.insert(log);
                 }
             }
 
@@ -146,6 +151,20 @@ public class NetworkService extends Service {
         }
 
         private void initLog() {
+            if (mLogCount % 10 == 0) {
+                Log.d(TAG, "App UIDs updated.");
+                mAppUids.clear();
+                List<App> apps = mAppQuery.forCurrentThread().list();
+                for (App app : apps) {
+                    try {
+                        int uid = AppUtil.getUid(mContext, app.getPackageName());
+                        mAppUids.put(app, uid);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             Date now = new Date();
 
             if (TrafficStats.getMobileTxBytes() == 0 && TrafficStats.getMobileRxBytes() == 0) {
@@ -158,17 +177,13 @@ public class NetworkService extends Service {
                     mCurrentTotalRxBytes, networkType);
 
             mAppLogs.clear();
-            List<App> apps = mAppQuery.forCurrentThread().list();
-            for (App app : apps) {
-                try {
-                    int uid = AppUtil.getUid(mContext, app.getPackageName());
-                    mAppLogs.put(app, new AppLog(null, now, app.getId(),
-                            TrafficStats.getUidTxBytes(uid),
-                            TrafficStats.getUidRxBytes(uid),
-                            networkType));
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
+            for (Map.Entry<App, Integer> entry : mAppUids.entrySet()) {
+                App app = entry.getKey();
+                int uid = entry.getValue();
+                mAppLogs.put(app, new AppLog(null, now, app.getId(),
+                        TrafficStats.getUidTxBytes(uid),
+                        TrafficStats.getUidRxBytes(uid),
+                        networkType));
             }
         }
 
