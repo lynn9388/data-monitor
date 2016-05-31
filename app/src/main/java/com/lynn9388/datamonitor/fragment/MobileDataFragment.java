@@ -234,8 +234,8 @@ public class MobileDataFragment extends Fragment {
 
     private SpannableString generatePieCenterText() {
         float usagePercentage = mSharedPreferences.getFloat(sUsagePercentagePrefKey, 0f);
-        int warningPercent = mSharedPreferences.getInt(SettingsFragment.PREF_KEY_WARNING_PERCENT, 0);
-        if (0 < usagePercentage && usagePercentage < warningPercent * 0.8) {
+        int warningPercent = mSharedPreferences.getInt(SettingsFragment.PREF_KEY_WARNING_PERCENT, 50);
+        if (0 <= usagePercentage && usagePercentage < warningPercent * 0.8) {
             mColors[3] = ContextCompat.getColor(getContext(), R.color.colorSufficiency);
         } else if (usagePercentage < warningPercent) {
             mColors[3] = ContextCompat.getColor(getContext(), R.color.colorNormal);
