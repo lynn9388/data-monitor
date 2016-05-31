@@ -18,22 +18,35 @@
 
 package com.lynn9388.datamonitor.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lynn9388.datamonitor.MainActivity;
 import com.lynn9388.datamonitor.R;
+import com.lynn9388.datamonitor.fragment.AppDetailFragment;
 
 public abstract class AppHolder extends RecyclerView.ViewHolder {
+    public static final String ACTION_BAR_TITLE = "action_bar_title";
     public ImageView mIconView;
     public TextView mAppNameView;
     public TextView mPackageNameView;
     public TextView mDataSendView;
     public TextView mDataReceiveView;
 
-    public AppHolder(View itemView) {
+    private Context mContext;
+
+    public AppHolder(Context context, View itemView) {
         super(itemView);
+        mContext = context;
+
         mIconView = (ImageView) itemView.findViewById(R.id.icon);
         mAppNameView = (TextView) itemView.findViewById(R.id.app_name);
         mPackageNameView = (TextView) itemView.findViewById(R.id.package_name);
@@ -45,7 +58,17 @@ public abstract class AppHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
                 String packageName = packageNameView.getText().toString();
-                AppHolder.this.onClick(packageName);
+                String appName = mAppNameView.getText().toString();
+                MainActivity mainActivity = (MainActivity) mContext;
+                FragmentTransaction fragmentTransaction =
+                        mainActivity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.addToBackStack(null);
+                Bundle bundle = new Bundle();
+                bundle.putString(ACTION_BAR_TITLE, getActionBarTitle());
+                AppDetailFragment appDetailFragment = new AppDetailFragment();
+                appDetailFragment.setArguments(bundle);
+                fragmentTransaction.add(R.id.main_activity_content, appDetailFragment).commit();
+                mainActivity.getSupportActionBar().setTitle(appName);
             }
         });
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -53,13 +76,18 @@ public abstract class AppHolder extends RecyclerView.ViewHolder {
             public boolean onLongClick(View v) {
                 TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
                 String packageName = packageNameView.getText().toString();
-                AppHolder.this.onLongClick(packageName);
+                showAppDetails(packageName);
                 return true;
             }
         });
     }
 
-    abstract void onClick(String packageName);
+    private void showAppDetails(String packageName) {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", packageName, null);
+        intent.setData(uri);
+        mContext.startActivity(intent);
+    }
 
-    abstract void onLongClick(String packageName);
+    abstract String getActionBarTitle();
 }

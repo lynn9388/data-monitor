@@ -20,9 +20,6 @@ package com.lynn9388.datamonitor.adapter;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,14 +46,10 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
     public AppHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_app_data_usage, parent, false);
-        return new AppHolder(view) {
+        return new AppHolder(mContext, view) {
             @Override
-            void onClick(String packageName) {
-                showAppDetails(packageName);
-            }
-
-            @Override
-            void onLongClick(String packageName) {
+            String getActionBarTitle() {
+                return mContext.getString(R.string.nav_real_time_title);
             }
         };
     }
@@ -102,12 +95,5 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
                 return rValue.compareTo(lValue);
             }
         });
-    }
-
-    protected void showAppDetails(String packageName) {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", packageName, null);
-        intent.setData(uri);
-        mContext.startActivity(intent);
     }
 }

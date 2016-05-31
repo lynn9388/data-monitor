@@ -36,14 +36,10 @@ public class AppsAdapter extends RealTimeAdapter {
     public AppHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_app_data_usage, parent, false);
-        return new AppHolder(view) {
+        return new AppHolder(mContext, view) {
             @Override
-            void onClick(String packageName) {
-            }
-
-            @Override
-            void onLongClick(String packageName) {
-                showAppDetails(packageName);
+            String getActionBarTitle() {
+                return mContext.getString(R.string.nav_apps_title);
             }
         };
     }
