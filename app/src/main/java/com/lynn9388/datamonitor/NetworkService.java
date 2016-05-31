@@ -142,8 +142,8 @@ public class NetworkService extends Service {
                 long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
                 long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
                 if (sendBytes != 0 || receiveBytes != 0) {
-                    app.setTotalSendBytes(app.getTotalSendBytes() + mCurrentTxBytes);
-                    app.setTotalReceiveBytes(app.getTotalReceiveBytes() + mCurrentRxBytes);
+                    app.setTotalSendBytes(app.getTotalSendBytes() + sendBytes);
+                    app.setTotalReceiveBytes(app.getTotalReceiveBytes() + receiveBytes);
                     mAppDao.insertOrReplace(app);
                     log.setSendBytes(sendBytes);
                     log.setReceiveBytes(receiveBytes);
