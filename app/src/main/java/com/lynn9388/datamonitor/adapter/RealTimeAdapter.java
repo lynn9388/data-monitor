@@ -38,11 +38,11 @@ import java.util.List;
 
 public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
     private Context mContext;
-    private List<AppInfo> mDataset;
+    private List<AppInfo> mDataSet;
 
     public RealTimeAdapter(Context context) {
         mContext = context;
-        mDataset = new ArrayList<>();
+        mDataSet = new ArrayList<>();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
 
     @Override
     public void onBindViewHolder(AppHolder holder, int position) {
-        AppInfo appInfo = mDataset.get(position);
+        AppInfo appInfo = mDataSet.get(position);
         holder.mIconView.setImageDrawable(appInfo.icon);
         holder.mAppNameView.setText(appInfo.mAppName);
         holder.mPackageNameView.setText(appInfo.mPackageName);
@@ -69,12 +69,12 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return mDataSet.size();
     }
 
     public void addItem(String packageName, long sendBytes, long receiveBytes) {
         AppInfo target = null;
-        for (AppInfo info : mDataset) {
+        for (AppInfo info : mDataSet) {
             if (info.mPackageName.equals(packageName)) {
                 target = info;
                 break;
@@ -82,15 +82,15 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
         }
         if (target == null) {
             target = new AppInfo(mContext, packageName, sendBytes, receiveBytes);
-            mDataset.add(target);
+            mDataSet.add(target);
         } else {
             target.mSendBytes += sendBytes;
             target.mReceiveBytes += receiveBytes;
         }
     }
 
-    public void sortDataset() {
-        Collections.sort(mDataset, new Comparator<AppInfo>() {
+    public void sortDataSet() {
+        Collections.sort(mDataSet, new Comparator<AppInfo>() {
             @Override
             public int compare(AppInfo lhs, AppInfo rhs) {
                 Long lValue = lhs.mSendBytes + lhs.mReceiveBytes;

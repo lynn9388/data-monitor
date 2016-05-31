@@ -232,7 +232,7 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
                 mRealTimeAdapter.addItem(log.mPackageName, log.mSendBytes, log.mReceiveBytes);
             }
         }
-        mRealTimeAdapter.sortDataset();
+        mRealTimeAdapter.sortDataSet();
 
         initAppLogs();
     }
