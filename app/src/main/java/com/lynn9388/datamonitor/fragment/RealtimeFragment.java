@@ -58,6 +58,7 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -71,15 +72,18 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
     private Context mContext;
     private LineChart mChart;
     private RealTimeAdapter mRealTimeAdapter;
+
     private int[] mColors;
     private String[] mDataTypes;
     private float[] mBytes;
-    private long mLastTotalRxBytes;
-    private long mLastTotalTxBytes;
     private List<App> mApps;
     private List<DataUsage> mAppLogs;
+
     private TimerTask mTimerTask;
     private TimerTask mUpdateAppTask;
+
+    private long mLastTotalRxBytes;
+    private long mLastTotalTxBytes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,6 +117,7 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
         };
 
         mBytes = new float[4];
+        mAppLogs = new ArrayList<>();
 
         return view;
     }
@@ -153,7 +158,7 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
 
         new Timer().scheduleAtFixedRate(mTimerTask, 1000, 1000);
         new Timer().scheduleAtFixedRate(mUpdateAppTask, 0, 30 * 1000);
-        mAppLogs = new ArrayList<>();
+
         initAppLogs();
     }
 
@@ -225,7 +230,8 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
         mLastTotalRxBytes = currentTotalRxBytes;
         mLastTotalTxBytes = currentTotalTxBytes;
 
-        for (DataUsage log : mAppLogs) {
+        for (Iterator<DataUsage> logs = mAppLogs.iterator(); logs.hasNext(); ) {
+            DataUsage log = logs.next();
             log.mSendBytes = TrafficStats.getUidTxBytes(log.mUid) - log.mSendBytes;
             log.mReceiveBytes = TrafficStats.getUidRxBytes(log.mUid) - log.mReceiveBytes;
             if (log.mSendBytes != 0 && log.mReceiveBytes != 0) {
