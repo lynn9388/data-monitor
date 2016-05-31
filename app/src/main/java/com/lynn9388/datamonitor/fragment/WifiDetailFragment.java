@@ -18,17 +18,30 @@
 
 package com.lynn9388.datamonitor.fragment;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.dao.TrafficLog;
 import com.lynn9388.datamonitor.util.NetworkUtil;
+import com.lynn9388.datamonitor.util.Util;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class WifiDetailFragment extends TrafficDetailFragment {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        int padding = (int) Util.convertDpToPx(mContext, 8);
+        view.setPadding(padding, padding * 2, 0, padding);
+        return view;
+    }
+
     @Override
     void analyseLog(TrafficLog log, float[] values) {
         String networkType = log.getNetworkType();
