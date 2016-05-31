@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class TrafficUtil {
+    public static Date getStartOfHour(Date date) {
+        return DateUtils.truncate(date, Calendar.HOUR);
+    }
+
     public static Date getStartOfDay(Date date) {
         return DateUtils.truncate(date, Calendar.DATE);
     }
@@ -40,10 +44,14 @@ public class TrafficUtil {
     }
 
     public static Date getStartOfMonth(Date date) {
+        return DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+    }
+
+    public static Date getEndOfMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        return getStartOfDay(calendar.getTime());
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return getEndOfDay(calendar.getTime());
     }
 
     public static Date getSeveralDaysAgo(Date date, int days) {
@@ -57,12 +65,6 @@ public class TrafficUtil {
         return new Date(date.getTime() + 3600000);
     }
 
-    public static Date getEndOfMonth(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        return getEndOfDay(calendar.getTime());
-    }
 
     public static String getReadableValue(long bytes) {
         double value = Math.abs(bytes);

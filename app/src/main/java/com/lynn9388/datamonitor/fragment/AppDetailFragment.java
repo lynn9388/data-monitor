@@ -27,6 +27,8 @@ import android.view.ViewGroup;
 import com.lynn9388.datamonitor.MainActivity;
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.adapter.AppHolder;
+import com.lynn9388.datamonitor.dao.App;
+import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.dao.AppLog;
 import com.lynn9388.datamonitor.dao.AppLogDao;
 import com.lynn9388.datamonitor.util.DatabaseUtil;
@@ -39,12 +41,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class AppDetailFragment extends TrafficDetailFragment {
-    private String actionBarTitle;
+    private String mActionBarTitle;
+    private String mPackageName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = getArguments();
-        actionBarTitle = bundle.getString(AppHolder.ACTION_BAR_TITLE);
+        mActionBarTitle = bundle.getString(AppHolder.ACTION_BAR_TITLE);
+        mPackageName = bundle.getString(AppHolder.PACKAGE_NAME);
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -53,12 +57,23 @@ public class AppDetailFragment extends TrafficDetailFragment {
     protected void updateData() {
         SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault());
 
-        AppLogDao appLogDao = DatabaseUtil.getDaoSession(mContext).getAppLogDao();
-        List<AppLog> logs = appLogDao.queryBuilder().orderAsc(AppLogDao.Properties.Time).list();
+        AppDao appDao = DatabaseUtil.getDaoSession(mContext).getAppDao();
+        List<App> apps = appDao.queryBuilder()
+                .where(AppDao.Properties.PackageName.eq(mPackageName))
+                .list();
+
+        List<AppLog> logs = null;
+        if (apps.size() == 1) {
+            AppLogDao appLogDao = DatabaseUtil.getDaoSession(mContext).getAppLogDao();
+            logs = appLogDao.queryBuilder()
+                    .where(AppLogDao.Properties.AppId.eq(apps.get(0).getId()))
+                    .orderAsc(AppLogDao.Properties.Time)
+                    .list();
+        }
 
         Date start = null;
         if (logs.size() > 0) {
-            start = TrafficUtil.getStartOfDay(logs.get(0).getTime());
+            start = TrafficUtil.getStartOfHour(logs.get(0).getTime());
         }
 
         int valueSize = getLabels().length;
@@ -79,7 +94,7 @@ public class AppDetailFragment extends TrafficDetailFragment {
     @Override
     public void onPause() {
         super.onPause();
-        ((MainActivity) mContext).getSupportActionBar().setTitle(actionBarTitle);
+        ((MainActivity) mContext).getSupportActionBar().setTitle(mActionBarTitle);
     }
 
     @Override

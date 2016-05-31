@@ -35,6 +35,8 @@ import com.lynn9388.datamonitor.fragment.AppDetailFragment;
 
 public abstract class AppHolder extends RecyclerView.ViewHolder {
     public static final String ACTION_BAR_TITLE = "action_bar_title";
+    public static final String PACKAGE_NAME = "package_name";
+
     public ImageView mIconView;
     public TextView mAppNameView;
     public TextView mPackageNameView;
@@ -59,12 +61,14 @@ public abstract class AppHolder extends RecyclerView.ViewHolder {
                 TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
                 String packageName = packageNameView.getText().toString();
                 String appName = mAppNameView.getText().toString();
+
                 MainActivity mainActivity = (MainActivity) mContext;
                 FragmentTransaction fragmentTransaction =
                         mainActivity.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.addToBackStack(null);
                 Bundle bundle = new Bundle();
                 bundle.putString(ACTION_BAR_TITLE, getActionBarTitle());
+                bundle.putString(PACKAGE_NAME, packageName);
                 AppDetailFragment appDetailFragment = new AppDetailFragment();
                 appDetailFragment.setArguments(bundle);
                 fragmentTransaction.add(R.id.main_activity_content, appDetailFragment).commit();
