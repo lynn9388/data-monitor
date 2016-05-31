@@ -59,7 +59,7 @@ public class AppUtil {
 
     public static void insertApp(Context context, String packageName) {
         DaoSession daoSession = DatabaseUtil.getDaoSession(context);
-        daoSession.insert(new App(null, packageName));
+        daoSession.insert(new App(null, packageName, 0, 0));
     }
 
     public static void deleteAppAndLogs(Context context, String packageName) {
@@ -95,7 +95,7 @@ public class AppUtil {
         }
 
         for (String packageName : packageNames) {
-            daoSession.insert(new App(null, packageName));
+            daoSession.insert(new App(null, packageName, 0, 0));
         }
     }
 }

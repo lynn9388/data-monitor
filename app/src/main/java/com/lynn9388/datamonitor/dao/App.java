@@ -13,6 +13,8 @@ public class App {
     private Long id;
     /** Not-null value. */
     private String packageName;
+    private long totalSendBytes;
+    private long totalReceiveBytes;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -29,9 +31,11 @@ public class App {
         this.id = id;
     }
 
-    public App(Long id, String packageName) {
+    public App(Long id, String packageName, long totalSendBytes, long totalReceiveBytes) {
         this.id = id;
         this.packageName = packageName;
+        this.totalSendBytes = totalSendBytes;
+        this.totalReceiveBytes = totalReceiveBytes;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -56,6 +60,22 @@ public class App {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public long getTotalSendBytes() {
+        return totalSendBytes;
+    }
+
+    public void setTotalSendBytes(long totalSendBytes) {
+        this.totalSendBytes = totalSendBytes;
+    }
+
+    public long getTotalReceiveBytes() {
+        return totalReceiveBytes;
+    }
+
+    public void setTotalReceiveBytes(long totalReceiveBytes) {
+        this.totalReceiveBytes = totalReceiveBytes;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

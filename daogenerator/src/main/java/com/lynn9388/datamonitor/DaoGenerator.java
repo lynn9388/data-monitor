@@ -44,6 +44,8 @@ public class DaoGenerator {
         Entity app = schema.addEntity("App");
         app.addIdProperty();
         app.addStringProperty("packageName").notNull().unique();
+        app.addLongProperty("totalSendBytes").notNull();
+        app.addLongProperty("totalReceiveBytes").notNull();
 
         Entity appLog = schema.addEntity("AppLog");
         appLog.addIdProperty();
