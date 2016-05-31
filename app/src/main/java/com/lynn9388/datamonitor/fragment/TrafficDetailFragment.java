@@ -53,8 +53,8 @@ import java.util.Locale;
 
 public abstract class TrafficDetailFragment extends Fragment implements OnChartValueSelectedListener {
     protected Context mContext;
+    protected Handler mHandler;
     private BarChart mChart;
-    private Handler mHandler;
     private Thread mThread;
 
     @Override
@@ -143,7 +143,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
         l.setXEntrySpace(6f);
     }
 
-    private void updateData() {
+    protected void updateData() {
         SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault());
 
         Date start = TrafficUtil.getSeveralDaysAgo(new Date(), 30);
@@ -152,6 +152,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
         TrafficLogDao trafficLogDao = DatabaseUtil.getDaoSession(mContext).getTrafficLogDao();
         List<TrafficLog> logs = trafficLogDao.queryBuilder()
                 .where(TrafficLogDao.Properties.Time.ge(start))
+                .orderAsc(TrafficLogDao.Properties.Time)
                 .list();
 
         int valueSize = getLabels().length;
@@ -180,7 +181,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
         mHandler.sendEmptyMessage(0);
     }
 
-    private void addEntry(String xVal, float[] values) {
+    protected void addEntry(String xVal, float[] values) {
         BarData data = mChart.getData();
         if (data != null && data.getDataSetCount() > 0) {
             data.addXValue(xVal);
@@ -201,7 +202,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
         }
     }
 
-    abstract void analyseLog(TrafficLog log, float[] values);
+    abstract void analyseLog(Object log, float[] values);
 
     abstract int[] getColors();
 

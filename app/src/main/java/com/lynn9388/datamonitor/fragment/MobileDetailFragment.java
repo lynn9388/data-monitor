@@ -18,42 +18,30 @@
 
 package com.lynn9388.datamonitor.fragment;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.lynn9388.datamonitor.R;
 import com.lynn9388.datamonitor.dao.TrafficLog;
 import com.lynn9388.datamonitor.util.NetworkUtil;
-import com.lynn9388.datamonitor.util.Util;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MobileDetailFragment extends TrafficDetailFragment {
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        int padding = (int) Util.convertDpToPx(mContext, 8);
-        view.setPadding(padding, padding * 2, 0, padding);
-        return view;
-    }
-
-    @Override
-    void analyseLog(TrafficLog log, float[] values) {
-        String networkType = log.getNetworkType();
+    void analyseLog(Object log, float[] values) {
+        TrafficLog trafficLog = (TrafficLog) log;
+        String networkType = trafficLog.getNetworkType();
         if (networkType.equals(NetworkUtil.NetworkType.NETWORK_TYPE_2G.toString())) {
-            values[0] += log.getSendBytes();
-            values[1] += log.getReceiveBytes();
+            values[0] += trafficLog.getSendBytes();
+            values[1] += trafficLog.getReceiveBytes();
         } else if (networkType.equals(NetworkUtil.NetworkType.NETWORK_TYPE_3G.toString())) {
-            values[2] += log.getSendBytes();
-            values[3] += log.getReceiveBytes();
+            values[2] += trafficLog.getSendBytes();
+            values[3] += trafficLog.getReceiveBytes();
         } else if (networkType.equals(NetworkUtil.NetworkType.NETWORK_TYPE_4G.toString())) {
-            values[4] += log.getSendBytes();
-            values[5] += log.getReceiveBytes();
+            values[4] += trafficLog.getSendBytes();
+            values[5] += trafficLog.getReceiveBytes();
         }
     }
 
