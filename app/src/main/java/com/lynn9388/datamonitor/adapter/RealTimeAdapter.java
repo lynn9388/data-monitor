@@ -37,8 +37,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
-    private Context mContext;
-    private List<AppInfo> mDataSet;
+    protected Context mContext;
+    protected List<AppInfo> mDataSet;
 
     public RealTimeAdapter(Context context) {
         mContext = context;
@@ -53,6 +53,10 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
             @Override
             void onClick(String packageName) {
                 showAppDetails(packageName);
+            }
+
+            @Override
+            void onLongClick(String packageName) {
             }
         };
     }
@@ -100,7 +104,7 @@ public class RealTimeAdapter extends RecyclerView.Adapter<AppHolder> {
         });
     }
 
-    private void showAppDetails(String packageName) {
+    protected void showAppDetails(String packageName) {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", packageName, null);
         intent.setData(uri);

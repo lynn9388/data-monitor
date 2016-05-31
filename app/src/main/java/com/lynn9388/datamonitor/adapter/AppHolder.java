@@ -48,7 +48,18 @@ public abstract class AppHolder extends RecyclerView.ViewHolder {
                 AppHolder.this.onClick(packageName);
             }
         });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TextView packageNameView = (TextView) v.findViewById(R.id.package_name);
+                String packageName = packageNameView.getText().toString();
+                AppHolder.this.onLongClick(packageName);
+                return true;
+            }
+        });
     }
 
     abstract void onClick(String packageName);
+
+    abstract void onLongClick(String packageName);
 }
