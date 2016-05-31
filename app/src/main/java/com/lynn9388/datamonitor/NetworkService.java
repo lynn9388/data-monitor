@@ -34,6 +34,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.lynn9388.datamonitor.dao.App;
+import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.dao.AppLog;
 import com.lynn9388.datamonitor.dao.AppLogDao;
 import com.lynn9388.datamonitor.dao.DaoSession;
@@ -86,8 +87,9 @@ public class NetworkService extends Service {
         private Context mContext;
         private String networkType;
 
-        private TrafficLogDao mTrafficLogDao;
+        private AppDao mAppDao;
         private AppLogDao mAppLogDao;
+        private TrafficLogDao mTrafficLogDao;
 
         private Query mAppQuery;
 
@@ -105,8 +107,9 @@ public class NetworkService extends Service {
             mContext = context;
 
             DaoSession daoSession = DatabaseUtil.getDaoSession(context);
-            mTrafficLogDao = daoSession.getTrafficLogDao();
+            mAppDao = daoSession.getAppDao();
             mAppLogDao = daoSession.getAppLogDao();
+            mTrafficLogDao = daoSession.getTrafficLogDao();
             mAppQuery = daoSession.getAppDao().queryBuilder().build();
 
             mLogCount = 0;
@@ -133,11 +136,15 @@ public class NetworkService extends Service {
 
             // Calculate network usage of each app, don't save log if it doesn't use network
             for (Map.Entry<App, AppLog> entry : mAppLogs.entrySet()) {
-                int uid = mAppUids.get(entry.getKey());
+                App app = entry.getKey();
+                int uid = mAppUids.get(app);
                 AppLog log = entry.getValue();
                 long sendBytes = TrafficStats.getUidTxBytes(uid) - log.getSendBytes();
                 long receiveBytes = TrafficStats.getUidRxBytes(uid) - log.getReceiveBytes();
                 if (sendBytes != 0 || receiveBytes != 0) {
+                    app.setTotalSendBytes(app.getTotalSendBytes() + mCurrentTxBytes);
+                    app.setTotalReceiveBytes(app.getTotalReceiveBytes() + mCurrentRxBytes);
+                    mAppDao.insertOrReplace(app);
                     log.setSendBytes(sendBytes);
                     log.setReceiveBytes(receiveBytes);
                     mAppLogDao.insert(log);
@@ -152,7 +159,7 @@ public class NetworkService extends Service {
 
         private void initLog() {
             if (mLogCount % 10 == 0) {
-                Log.d(TAG, "App UIDs updated.");
+                Log.d(TAG, "Uid updated.");
                 mAppUids.clear();
                 List<App> apps = mAppQuery.forCurrentThread().list();
                 for (App app : apps) {
