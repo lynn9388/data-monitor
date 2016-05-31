@@ -27,7 +27,7 @@ public class AppInfo {
     public Drawable icon;
     public String mAppName;
     public String mPackageName;
-    public Long mSendBytes;
+    public long mSendBytes;
     public long mReceiveBytes;
 
     public AppInfo(Context context, String packageName, long sendBytes, long receiveBytes) {
