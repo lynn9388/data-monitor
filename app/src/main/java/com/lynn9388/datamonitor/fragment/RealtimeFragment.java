@@ -53,6 +53,7 @@ import com.lynn9388.datamonitor.dao.AppDao;
 import com.lynn9388.datamonitor.util.AppUtil;
 import com.lynn9388.datamonitor.util.DatabaseUtil;
 import com.lynn9388.datamonitor.util.TrafficUtil;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class RealTimeFragment extends Fragment implements OnChartValueSelectedLi
         initChart();
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mContext).build());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         mRealTimeAdapter = new RealTimeAdapter(mContext);
