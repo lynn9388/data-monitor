@@ -44,14 +44,11 @@ public class TrafficUtil {
     }
 
     public static Date getStartOfMonth(Date date) {
-        return DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
+        return DateUtils.truncate(date, Calendar.MONTH);
     }
 
     public static Date getEndOfMonth(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        return getEndOfDay(calendar.getTime());
+        return DateUtils.addMilliseconds(DateUtils.ceiling(date, Calendar.MONTH), -1);
     }
 
     public static Date getSeveralDaysAgo(Date date, int days) {
