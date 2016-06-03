@@ -91,11 +91,12 @@ public class OverviewFragment extends Fragment {
             mRows[i] = view.findViewById(viewIds[i]);
         }
 
-        mColors = new int[4];
-        mColors[0] = ContextCompat.getColor(getContext(), R.color.color0);
-        mColors[1] = ContextCompat.getColor(getContext(), R.color.color1);
-        mColors[2] = ContextCompat.getColor(getContext(), R.color.color2);
-        mColors[3] = ContextCompat.getColor(getContext(), R.color.color3);
+        mColors = new int[]{
+                ContextCompat.getColor(getContext(), R.color.color0),
+                ContextCompat.getColor(getContext(), R.color.color1),
+                ContextCompat.getColor(getContext(), R.color.color2),
+                ContextCompat.getColor(getContext(), R.color.color3)
+        };
 
         mDataTypes = new ArrayList<>();
         mDataTypes.add(getString(R.string.mobile_down));
@@ -172,6 +173,7 @@ public class OverviewFragment extends Fragment {
     private void updateViews() {
         mChart.setCenterText(generatePieCenterText());
         mChart.setData(generatePieData());
+        mChart.notifyDataSetChanged();
         mChart.invalidate();
 
         Legend legend = mChart.getLegend();
