@@ -189,6 +189,7 @@ public abstract class TrafficDetailFragment extends Fragment implements OnChartV
             BarDataSet dataSet = (BarDataSet) data.getDataSetByIndex(0);
             dataSet.addEntry(new BarEntry(values, dataSet.getEntryCount()));
             data.notifyDataChanged();
+            mChart.notifyDataSetChanged();
         } else {
             List<String> xVals = new ArrayList<>();
             xVals.add(xVal);
