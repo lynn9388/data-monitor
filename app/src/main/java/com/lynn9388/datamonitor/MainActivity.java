@@ -81,7 +81,17 @@ public class MainActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-        replaceFragment(new MobileDataFragment(), getString(R.string.nav_mobile_data_title));
+        if (savedInstanceState == null) {
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        } else {
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            String title = getSupportActionBar().getTitle().toString();
+            if (title.equals(getString(R.string.nav_detail_title))) {
+                tabLayout.setVisibility(View.VISIBLE);
+            } else {
+                tabLayout.setVisibility(View.GONE);
+            }
+        }
 
         boolean isDataMonitoringEnabled = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(SettingsFragment.PREF_KEY_ENABLE_DATA_MONITORING, true);
